@@ -36,8 +36,9 @@ public class SecurityConfig {
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
                 // Public endpoints
-                .requestMatchers("/", "/index", "/home").permitAll()   // Mở trang chủ
-                .requestMatchers("/api/auth/**").permitAll()          // API đăng nhập/đăng ký
+                .requestMatchers("/", "/index.html", "/home").permitAll()
+                .requestMatchers("/static/**").permitAll() // React static files
+                .requestMatchers("/api/auth/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/menu/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/tables/**").permitAll()
 
@@ -70,7 +71,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*")); // Cho phép tất cả origin
+        configuration.setAllowedOriginPatterns(Arrays.asList("*")); // Cho phép tất cả origin, có thể chỉnh sau cho domain frontend
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));

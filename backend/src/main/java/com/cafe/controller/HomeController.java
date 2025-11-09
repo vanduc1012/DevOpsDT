@@ -1,13 +1,13 @@
 package com.cafe.controller;
 
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.stereotype.Controller;
+import org.springframework.web.bind.annotation.RequestMapping;
 
-@RestController
+@Controller
 public class HomeController {
 
-    @GetMapping("/")
-    public String home() {
-        return "Welcome to Cafe Management API!";
+    @RequestMapping(value = {"/", "/home", "/index"})
+    public String index() {
+        return "index.html"; // Spring Boot sẽ trả về file index.html trong resources/static
     }
 }
