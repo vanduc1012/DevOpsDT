@@ -35,14 +35,23 @@ public class SecurityConfig {
             .csrf(csrf -> csrf.disable())
             .cors(cors -> cors.configurationSource(corsConfigurationSource()))
             .authorizeHttpRequests(auth -> auth
-                // Public endpoints
-                .requestMatchers("/", "/index.html", "/home").permitAll()
-                .requestMatchers("/static/**").permitAll() // React static files
+
+                // ===== PUBLIC FRONTEND FILES =====
+                .requestMatchers("/", "/index.html", "/home", "/favicon.ico").permitAll()
+                .requestMatchers("/static/**", "/assets/**").permitAll()
+
+                // ===== AUTH PUBLIC =====
                 .requestMatchers("/api/auth/**").permitAll()
+
+                // ===== PUBLIC GET APIs (khách xem menu, table, homepage) =====
                 .requestMatchers(HttpMethod.GET, "/api/menu/**").permitAll()
                 .requestMatchers(HttpMethod.GET, "/api/tables/**").permitAll()
 
-                // Admin-only endpoints
+                // Cho phép frontend test API root
+                .requestMatchers(HttpMethod.GET, "/api").permitAll()
+                .requestMatchers(HttpMethod.GET, "/api/health").permitAll()
+
+                // ===== ADMIN ONLY =====
                 .requestMatchers("/api/reports/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.POST, "/api/menu/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PUT, "/api/menu/**").hasRole("ADMIN")
@@ -53,11 +62,11 @@ public class SecurityConfig {
                 .requestMatchers(HttpMethod.DELETE, "/api/tables/**").hasRole("ADMIN")
                 .requestMatchers(HttpMethod.PATCH, "/api/orders/**").hasRole("ADMIN")
 
-                // Authenticated endpoints
+                // ===== USER / ADMIN AUTHENTICATED =====
                 .requestMatchers(HttpMethod.GET, "/api/orders/**").authenticated()
                 .requestMatchers(HttpMethod.POST, "/api/orders/**").authenticated()
 
-                // Các request còn lại
+                // ===== DEFAULT =====
                 .anyRequest().authenticated()
             )
             .sessionManagement(session -> session
@@ -71,7 +80,7 @@ public class SecurityConfig {
     @Bean
     public CorsConfigurationSource corsConfigurationSource() {
         CorsConfiguration configuration = new CorsConfiguration();
-        configuration.setAllowedOriginPatterns(Arrays.asList("*")); // Cho phép tất cả origin, có thể chỉnh sau cho domain frontend
+        configuration.setAllowedOriginPatterns(Arrays.asList("*"));
         configuration.setAllowedMethods(Arrays.asList("GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"));
         configuration.setAllowedHeaders(Arrays.asList("*"));
         configuration.setExposedHeaders(Arrays.asList("Authorization"));
