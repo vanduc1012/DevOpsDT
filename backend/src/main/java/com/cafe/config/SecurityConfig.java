@@ -79,8 +79,8 @@ public class SecurityConfig {
                 
                 // Order Management - Admin only
                 .requestMatchers(HttpMethod.GET, "/api/orders").hasRole("ADMIN") // GET all orders - Admin only
-                .requestMatchers(HttpMethod.PATCH, "/api/orders/**/status").hasRole("ADMIN") // Update order status
-                .requestMatchers(HttpMethod.PATCH, "/api/orders/**/transfer-table").hasRole("ADMIN") // Transfer table
+                .requestMatchers(HttpMethod.PATCH, "/api/orders/*/status").hasRole("ADMIN") // Update order status
+                .requestMatchers(HttpMethod.PATCH, "/api/orders/*/transfer-table").hasRole("ADMIN") // Transfer table
                 
                 // ===== AUTHENTICATED USERS (USER & ADMIN) =====
                 // User orders - authenticated users

@@ -15,43 +15,83 @@ import java.util.Map;
 @RequestMapping("/api/orders")
 @RequiredArgsConstructor
 public class OrderController {
-    
+
     private final OrderService orderService;
-    
+
     @GetMapping
     public ResponseEntity<List<Order>> getAllOrders() {
         return ResponseEntity.ok(orderService.getAllOrders());
     }
-    
+
     @GetMapping("/my-orders")
     public ResponseEntity<List<Order>> getMyOrders() {
         return ResponseEntity.ok(orderService.getMyOrders());
     }
-    
+
     @GetMapping("/table/{tableId}")
     public ResponseEntity<List<Order>> getOrdersByTable(@PathVariable String tableId) {
         return ResponseEntity.ok(orderService.getOrdersByTable(tableId));
     }
-    
+
     @GetMapping("/{id}")
-    public ResponseEntity<Order> getOrderById(@PathVariable String id) {
-        return ResponseEntity.ok(orderService.getOrderById(id));
+    public ResponseEntity<?> getOrderById(@PathVariable String id) {
+        try {
+            Order order = orderService.getOrderById(id);
+            return ResponseEntity.ok(order);
+        } catch (Exception e) {
+            return ResponseEntity.status(404).body("Order not found: " + e.getMessage());
+        }
     }
-    
+
     @PostMapping
-    public ResponseEntity<Order> createOrder(@RequestBody CreateOrderRequest request) {
-        return ResponseEntity.ok(orderService.createOrder(request));
+    public ResponseEntity<?> createOrder(@RequestBody CreateOrderRequest request) {
+        try {
+            Order order = orderService.createOrder(request);
+            return ResponseEntity.ok(order);
+        } catch (Exception e) {
+            return ResponseEntity.badRequest().body("Failed to create order: " + e.getMessage());
+        }
     }
-    
+
     @PatchMapping("/{id}/status")
-    public ResponseEntity<Order> updateOrderStatus(@PathVariable String id, @RequestBody Map<String, String> request) {
-        OrderStatus status = OrderStatus.valueOf(request.get("status"));
-        return ResponseEntity.ok(orderService.updateOrderStatus(id, status));
+    public ResponseEntity<?> updateOrderStatus(@PathVariable String id, @RequestBody Map<String, String> request) {
+
+        System.out.println("request: " + request);
+        System.out.println("id: " + id);
+        System.out.println("status: " + request.get("status"));
+        
+        String statusStr = request.get("status");
+        if (statusStr == null || statusStr.isBlank()) {
+            return ResponseEntity.badRequest().body("Status is required");
+        }
+
+        OrderStatus status;
+        try {
+            status = OrderStatus.valueOf(statusStr.toUpperCase());
+        } catch (IllegalArgumentException e) {
+            return ResponseEntity.badRequest().body("Invalid status value. Allowed: PENDING, COMPLETED, CANCELLED");
+        }
+
+        try {
+            Order updatedOrder = orderService.updateOrderStatus(id, status);
+            return ResponseEntity.ok(updatedOrder);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to update order status: " + e.getMessage());
+        }
     }
-    
+
     @PatchMapping("/{id}/transfer-table")
-    public ResponseEntity<Order> transferTable(@PathVariable String id, @RequestBody Map<String, String> request) {
+    public ResponseEntity<?> transferTable(@PathVariable String id, @RequestBody Map<String, String> request) {
         String newTableId = request.get("newTableId");
-        return ResponseEntity.ok(orderService.transferTable(id, newTableId));
+        if (newTableId == null || newTableId.isBlank()) {
+            return ResponseEntity.badRequest().body("newTableId is required");
+        }
+
+        try {
+            Order updatedOrder = orderService.transferTable(id, newTableId);
+            return ResponseEntity.ok(updatedOrder);
+        } catch (Exception e) {
+            return ResponseEntity.status(500).body("Failed to transfer table: " + e.getMessage());
+        }
     }
 }

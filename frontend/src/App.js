@@ -28,7 +28,6 @@ function App() {
           <Route path="/my-orders" element={<PrivateRoute><MyOrders /></PrivateRoute>} />
           
           <Route path="/admin/menu" element={<PrivateRoute adminOnly={true}><MenuManagement /></PrivateRoute>} />
-          <Route path="/admin/menu" element={<PrivateRoute adminOnly={true}><MenuManagement /></PrivateRoute>} />
           <Route path="/admin/tables" element={<PrivateRoute adminOnly={true}><TableManagement /></PrivateRoute>} />
           <Route path="/admin/orders" element={<PrivateRoute adminOnly={true}><OrderManagement /></PrivateRoute>} />
           <Route path="/admin/reports" element={<PrivateRoute adminOnly={true}><Reports /></PrivateRoute>} />

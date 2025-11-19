@@ -19,12 +19,27 @@ function Register() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
     try {
       await authService.register(formData);
       // Reload trang để axios config được cập nhật
       window.location.href = '/';
     } catch (err) {
-      setError(err.response?.data?.message || 'Đăng ký thất bại');
+      console.error('Register error:', err);
+      let errorMessage = 'Đăng ký thất bại. Vui lòng thử lại.';
+      
+      if (err.response) {
+        // Server responded with error
+        errorMessage = err.response.data?.message || errorMessage;
+      } else if (err.request) {
+        // Network error - cannot connect to backend
+        errorMessage = 'Không thể kết nối đến server. Vui lòng kiểm tra backend có đang chạy không.';
+      } else {
+        // Other error
+        errorMessage = err.message || errorMessage;
+      }
+      
+      setError(errorMessage);
     }
   };
 
@@ -40,6 +55,7 @@ function Register() {
             name="username"
             value={formData.username}
             onChange={handleChange}
+            autoComplete="username"
             required
           />
         </div>
@@ -50,6 +66,7 @@ function Register() {
             name="password"
             value={formData.password}
             onChange={handleChange}
+            autoComplete="new-password"
             required
           />
         </div>
@@ -60,6 +77,7 @@ function Register() {
             name="fullName"
             value={formData.fullName}
             onChange={handleChange}
+            autoComplete="name"
             required
           />
         </div>
@@ -70,6 +88,7 @@ function Register() {
             name="email"
             value={formData.email}
             onChange={handleChange}
+            autoComplete="email"
           />
         </div>
         <div className="form-group">
@@ -79,6 +98,7 @@ function Register() {
             name="phone"
             value={formData.phone}
             onChange={handleChange}
+            autoComplete="tel"
           />
         </div>
         <button type="submit" className="btn btn-primary">Đăng Ký</button>

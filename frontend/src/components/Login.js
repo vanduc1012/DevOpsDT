@@ -10,12 +10,29 @@ function Login() {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError('');
+    console.log('Attempting login with username:', username);
     try {
-      await authService.login(username, password);
+      const result = await authService.login(username, password);
+      console.log('Login successful:', result);
       // Reload trang để axios config được cập nhật
       window.location.href = '/';
     } catch (err) {
-      setError('Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.');
+      console.error('Login error:', err);
+      let errorMessage = 'Đăng nhập thất bại. Vui lòng kiểm tra lại thông tin.';
+      
+      if (err.response) {
+        // Server responded with error
+        errorMessage = err.response.data?.message || errorMessage;
+      } else if (err.request) {
+        // Network error - cannot connect to backend
+        errorMessage = 'Không thể kết nối đến server. Vui lòng kiểm tra backend có đang chạy không.';
+      } else {
+        // Other error
+        errorMessage = err.message || errorMessage;
+      }
+      
+      setError(errorMessage);
     }
   };
 
@@ -30,6 +47,7 @@ function Login() {
             type="text"
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            autoComplete="username"
             required
           />
         </div>
@@ -39,6 +57,7 @@ function Login() {
             type="password"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            autoComplete="current-password"
             required
           />
         </div>
