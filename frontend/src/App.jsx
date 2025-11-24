@@ -11,9 +11,15 @@ import OrderManagement from './pages/OrderManagement';
 import PriceManagement from './pages/PriceManagement';
 import PromotionManagement from './pages/PromotionManagement';
 import InventoryManagement from './pages/InventoryManagement';
+import PaymentManagement from './pages/PaymentManagement';
+import UserManagement from './pages/UserManagement';
 import Reports from './pages/Reports';
+import Profile from './pages/Profile';
 import BookTable from './pages/BookTable';
 import MyOrders from './pages/MyOrders';
+import ViewMenu from './pages/ViewMenu';
+import OrderOnline from './pages/OrderOnline';
+import Payment from './pages/Payment';
 import { authService } from './api/services';
 
 function App() {
@@ -27,8 +33,12 @@ function App() {
           <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <Login />} />
           <Route path="/register" element={isAuthenticated ? <Navigate to="/" /> : <Register />} />
           <Route path="/" element={<PrivateRoute><Home /></PrivateRoute>} />
+          <Route path="/menu" element={<PrivateRoute><ViewMenu /></PrivateRoute>} />
           <Route path="/book-table" element={<PrivateRoute><BookTable /></PrivateRoute>} />
+          <Route path="/order-online" element={<PrivateRoute><OrderOnline /></PrivateRoute>} />
+          <Route path="/payment/:orderId" element={<PrivateRoute><Payment /></PrivateRoute>} />
           <Route path="/my-orders" element={<PrivateRoute><MyOrders /></PrivateRoute>} />
+          <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
           
           <Route path="/admin/menu" element={<PrivateRoute adminOnly={true}><MenuManagement /></PrivateRoute>} />
           <Route path="/admin/tables" element={<PrivateRoute adminOnly={true}><TableManagement /></PrivateRoute>} />
@@ -36,6 +46,8 @@ function App() {
           <Route path="/admin/prices" element={<PrivateRoute adminOnly={true}><PriceManagement /></PrivateRoute>} />
           <Route path="/admin/promotions" element={<PrivateRoute adminOnly={true}><PromotionManagement /></PrivateRoute>} />
           <Route path="/admin/inventory" element={<PrivateRoute adminOnly={true}><InventoryManagement /></PrivateRoute>} />
+          <Route path="/admin/payment" element={<PrivateRoute adminOnly={true}><PaymentManagement /></PrivateRoute>} />
+          <Route path="/admin/users" element={<PrivateRoute adminOnly={true}><UserManagement /></PrivateRoute>} />
           <Route path="/admin/reports" element={<PrivateRoute adminOnly={true}><Reports /></PrivateRoute>} />
           
           <Route path="*" element={<Navigate to="/" />} />

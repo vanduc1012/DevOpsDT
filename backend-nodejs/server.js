@@ -13,6 +13,9 @@ app.use(cors({
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
+// Serve static files (for uploaded QR codes)
+app.use('/uploads', express.static('uploads'));
+
 // MongoDB Connection
 mongoose.connect(process.env.MONGODB_URI || 'mongodb+srv://vanduc1022:vanduc123321@cluster0.d29cy3o.mongodb.net/cafe_db?retryWrites=true&w=majority')
   .then(async () => {
@@ -68,6 +71,8 @@ const reportRoutes = require('./routes/reports');
 const priceRoutes = require('./routes/prices');
 const promotionRoutes = require('./routes/promotions');
 const inventoryRoutes = require('./routes/inventory');
+const paymentConfigRoutes = require('./routes/paymentConfig');
+const userRoutes = require('./routes/users');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/menu', menuRoutes);
@@ -77,6 +82,8 @@ app.use('/api/reports', reportRoutes);
 app.use('/api/prices', priceRoutes);
 app.use('/api/promotions', promotionRoutes);
 app.use('/api/inventory', inventoryRoutes);
+app.use('/api/payment-config', paymentConfigRoutes);
+app.use('/api/users', userRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

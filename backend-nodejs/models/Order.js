@@ -31,13 +31,39 @@ const orderSchema = new mongoose.Schema({
   tableId: {
     type: mongoose.Schema.Types.ObjectId,
     ref: 'CafeTable',
-    required: true
+    required: false // Optional for delivery/pickup orders
+  },
+  orderType: {
+    type: String,
+    enum: ['DINE_IN', 'DELIVERY', 'PICKUP'],
+    default: 'DINE_IN'
   },
   items: [orderItemSchema],
   totalAmount: {
     type: Number,
     default: 0,
     min: 0
+  },
+  deliveryFee: {
+    type: Number,
+    default: 0,
+    min: 0
+  },
+  deliveryAddress: {
+    type: String
+  },
+  deliveryPhone: {
+    type: String
+  },
+  paymentMethod: {
+    type: String,
+    enum: ['CASH', 'ONLINE', 'CARD'],
+    default: 'CASH'
+  },
+  paymentStatus: {
+    type: String,
+    enum: ['PENDING', 'PAID', 'FAILED', 'REFUNDED'],
+    default: 'PENDING'
   },
   status: {
     type: String,
@@ -57,6 +83,7 @@ const orderSchema = new mongoose.Schema({
 
 // Calculate total before saving
 orderSchema.pre('save', function(next) {
+  // Total amount is sum of items only (delivery fee is separate)
   this.totalAmount = this.items.reduce((total, item) => {
     return total + (item.price * item.quantity);
   }, 0);

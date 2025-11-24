@@ -47,9 +47,11 @@ function MyOrders() {
               <thead>
                 <tr>
                   <th>ID</th>
-                  <th>Bàn</th>
+                  <th>Loại đơn</th>
+                  <th>Bàn/Địa chỉ</th>
                   <th>Món</th>
                   <th>Tổng tiền</th>
+                  <th>Thanh toán</th>
                   <th>Trạng thái</th>
                   <th>Thời gian đặt</th>
                   <th>Thời gian hoàn thành</th>
@@ -59,11 +61,27 @@ function MyOrders() {
                 {orders.map((order) => {
                   const orderId = order._id || order.id;
                   const table = order.tableId || order.table;
+                  const orderTypeLabel = order.orderType === 'DELIVERY' ? 'Giao hàng' : 
+                                        order.orderType === 'PICKUP' ? 'Mang đi' : 'Tại quán';
+                  const paymentStatusLabel = order.paymentStatus === 'PAID' ? 'Đã thanh toán' :
+                                            order.paymentStatus === 'FAILED' ? 'Thất bại' :
+                                            order.paymentStatus === 'REFUNDED' ? 'Đã hoàn tiền' : 'Chưa thanh toán';
+                  
                   return (
                     <tr key={orderId}>
                       <td>#{orderId?.toString().slice(-6) || 'N/A'}</td>
                       <td>
-                        {table?.tableNumber ? `Bàn ${table.tableNumber}` : 'N/A'}
+                        {order.orderType === 'DELIVERY' && '🚚'}
+                        {order.orderType === 'PICKUP' && '📦'}
+                        {order.orderType === 'DINE_IN' && '🍽️'}
+                        {' '}{orderTypeLabel}
+                      </td>
+                      <td>
+                        {order.orderType === 'DINE_IN' ? (
+                          table?.tableNumber ? `Bàn ${table.tableNumber}` : 'N/A'
+                        ) : (
+                          order.deliveryAddress || 'N/A'
+                        )}
                       </td>
                       <td>
                         {order.items && order.items.length > 0 ? (
@@ -83,7 +101,30 @@ function MyOrders() {
                         )}
                       </td>
                       <td style={{ fontWeight: 'bold' }}>
-                        {order.totalAmount?.toLocaleString('vi-VN') || '0'} ₫
+                        {((order.totalAmount || 0) + (order.deliveryFee || 0)).toLocaleString('vi-VN')} ₫
+                        {order.deliveryFee > 0 && (
+                          <div style={{ fontSize: '0.75rem', color: '#666', fontWeight: 'normal' }}>
+                            (Gồm phí ship: {order.deliveryFee?.toLocaleString('vi-VN')} ₫)
+                          </div>
+                        )}
+                      </td>
+                      <td>
+                        <span style={{ 
+                          padding: '0.25rem 0.5rem', 
+                          borderRadius: '4px',
+                          fontSize: '0.875rem',
+                          background: order.paymentStatus === 'PAID' ? '#28a745' : 
+                                     order.paymentStatus === 'FAILED' ? '#dc3545' : '#ffc107',
+                          color: 'white'
+                        }}>
+                          {paymentStatusLabel}
+                        </span>
+                        {order.paymentMethod && (
+                          <div style={{ fontSize: '0.75rem', color: '#666', marginTop: '0.25rem' }}>
+                            ({order.paymentMethod === 'ONLINE' ? 'Online' : 
+                              order.paymentMethod === 'CARD' ? 'Thẻ' : 'Tiền mặt'})
+                          </div>
+                        )}
                       </td>
                       <td>{getStatusBadge(order.status || 'PENDING')}</td>
                       <td>

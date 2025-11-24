@@ -102,26 +102,21 @@ api.interceptors.response.use(
       console.error('API Error:', error.message);
     }
 
-    // Handle 401 and 403 errors
-    if (error.response && (error.response.status === 401 || error.response.status === 403)) {
-      console.warn('⚠️ Authentication error:', {
-        status: error.response.status,
-        message: error.response.data?.message,
-        url: error.config?.url
-      });
-      
-      // Chỉ redirect nếu không phải là request đến /api/auth (đăng nhập/đăng ký)
+    // Handle authorization errors
+    if (error.response) {
+      const status = error.response.status;
       const isAuthEndpoint = error.config?.url?.includes('/api/auth');
-      
-      if (!isAuthEndpoint) {
-      // Token không hợp lệ hoặc user không tồn tại - xóa và redirect
-      localStorage.removeItem('token');
-      localStorage.removeItem('user');
-      // Only redirect if not already on login page
+
+      if (status === 401 && !isAuthEndpoint) {
+        console.warn('⚠️ Authentication error (401). Redirecting to login.');
+        localStorage.removeItem('token');
+        localStorage.removeItem('user');
         if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
-          console.warn('🔄 Redirecting to login due to authentication error');
-        window.location.href = '/login';
+          window.location.href = '/login';
         }
+      } else if (status === 403 && !isAuthEndpoint) {
+        console.warn('⚠️ Permission denied (403). Staying on current page.');
+        // Không logout, chỉ thông báo
       }
     }
     return Promise.reject(error);

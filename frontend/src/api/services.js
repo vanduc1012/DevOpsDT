@@ -61,8 +61,12 @@ export const orderService = {
   getByTable: (tableId) => api.get(`/api/orders/table/${tableId}`),
   getById: (id) => api.get(`/api/orders/${id}`),
   create: (data) => api.post('/api/orders', data),
+  createOnline: (data) => api.post('/api/orders/online', data),
   updateStatus: (id, status) => api.patch(`/api/orders/${id}/status`, { status }),
   transferTable: (id, newTableId) => api.patch(`/api/orders/${id}/transfer-table`, { newTableId }),
+  processPayment: (orderId, paymentData) => api.post(`/api/orders/${orderId}/process-payment`, paymentData),
+  getQRPayment: (orderId) => api.get(`/api/orders/${orderId}/qr-payment`),
+  checkPaymentStatus: (orderId) => api.get(`/api/orders/${orderId}/payment-status`),
 };
 
 export const reportService = {
@@ -108,4 +112,30 @@ export const promotionService = {
   update: (id, data) => api.put(`/api/promotions/${id}`, data),
   delete: (id) => api.delete(`/api/promotions/${id}`),
   toggle: (id) => api.post(`/api/promotions/${id}/toggle`),
+};
+
+export const paymentConfigService = {
+  getAll: () => api.get('/api/payment-config'),
+  getActive: () => api.get('/api/payment-config/active'),
+  getById: (id) => api.get(`/api/payment-config/${id}`),
+  create: (formData) => api.post('/api/payment-config', formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }),
+  update: (id, formData) => api.put(`/api/payment-config/${id}`, formData, {
+    headers: {
+      'Content-Type': 'multipart/form-data'
+    }
+  }),
+  delete: (id) => api.delete(`/api/payment-config/${id}`),
+  toggle: (id) => api.post(`/api/payment-config/${id}/toggle`),
+};
+
+export const userService = {
+  getAll: () => api.get('/api/users'),
+  getById: (id) => api.get(`/api/users/${id}`),
+  getMe: () => api.get('/api/users/me'),
+  updateRole: (id, role) => api.patch(`/api/users/${id}/role`, { role }),
+  delete: (id) => api.delete(`/api/users/${id}`),
 };
