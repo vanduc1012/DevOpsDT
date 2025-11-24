@@ -31,7 +31,12 @@ function MenuManagement() {
     e.preventDefault();
     try {
       if (editingItem) {
-        await menuService.update(editingItem.id, formData);
+        const itemId = editingItem._id || editingItem.id;
+        if (!itemId) {
+          alert('Lỗi: Không tìm thấy ID của món. Vui lòng thử lại.');
+          return;
+        }
+        await menuService.update(itemId, formData);
       } else {
         await menuService.create(formData);
       }
@@ -39,7 +44,7 @@ function MenuManagement() {
       resetForm();
       loadMenuItems();
     } catch (error) {
-      alert('Lỗi khi lưu món: ' + error.message);
+      alert('Lỗi khi lưu món: ' + (error.response?.data?.message || error.message));
     }
   };
 
@@ -50,12 +55,18 @@ function MenuManagement() {
   };
 
   const handleDelete = async (id) => {
+    if (!id) {
+      alert('Lỗi: Không tìm thấy ID của món. Vui lòng thử lại.');
+      return;
+    }
+    
     if (window.confirm('Bạn có chắc muốn xóa món này?')) {
       try {
         await menuService.delete(id);
         loadMenuItems();
       } catch (error) {
-        alert('Lỗi khi xóa món');
+        console.error('Error deleting menu item:', error);
+        alert('Lỗi khi xóa món: ' + (error.response?.data?.message || error.message));
       }
     }
   };
@@ -101,27 +112,30 @@ function MenuManagement() {
               </tr>
             </thead>
             <tbody>
-              {menuItems.map((item) => (
-                <tr key={item.id}>
-                  <td>{item.name}</td>
-                  <td>{item.description}</td>
-                  <td>{item.price?.toLocaleString('vi-VN')} ₫</td>
-                  <td>{item.category}</td>
-                  <td>
-                    <span className={`badge ${item.available ? 'badge-available' : 'badge-cancelled'}`}>
-                      {item.available ? 'Còn hàng' : 'Hết hàng'}
-                    </span>
-                  </td>
-                  <td>
-                    <button className="btn btn-secondary" onClick={() => handleEdit(item)} style={{ marginRight: '0.5rem' }}>
-                      Sửa
-                    </button>
-                    <button className="btn btn-danger" onClick={() => handleDelete(item.id)}>
-                      Xóa
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {menuItems.map((item) => {
+                const itemId = item._id || item.id;
+                return (
+                  <tr key={itemId}>
+                    <td>{item.name}</td>
+                    <td>{item.description}</td>
+                    <td>{item.price?.toLocaleString('vi-VN')} ₫</td>
+                    <td>{item.category}</td>
+                    <td>
+                      <span className={`badge ${item.available ? 'badge-available' : 'badge-cancelled'}`}>
+                        {item.available ? 'Còn hàng' : 'Hết hàng'}
+                      </span>
+                    </td>
+                    <td>
+                      <button className="btn btn-secondary" onClick={() => handleEdit(item)} style={{ marginRight: '0.5rem' }}>
+                        Sửa
+                      </button>
+                      <button className="btn btn-danger" onClick={() => handleDelete(itemId)}>
+                        Xóa
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>

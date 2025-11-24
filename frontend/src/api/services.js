@@ -75,3 +75,37 @@ export const reportService = {
     return api.get('/api/reports/monthly', { params: { year, month } });
   },
 };
+
+export const inventoryService = {
+  getAll: () => api.get('/api/inventory'),
+  getLowStock: () => api.get('/api/inventory/low-stock'),
+  getById: (id) => api.get(`/api/inventory/${id}`),
+  create: (data) => api.post('/api/inventory', data),
+  update: (id, data) => api.put(`/api/inventory/${id}`, data),
+  delete: (id) => api.delete(`/api/inventory/${id}`),
+  importStock: (id, data) => api.post(`/api/inventory/${id}/import`, data),
+  exportStock: (id, data) => api.post(`/api/inventory/${id}/export`, data),
+  adjustStock: (id, data) => api.post(`/api/inventory/${id}/adjust`, data),
+  getTransactions: () => api.get('/api/inventory/transactions'),
+  getTransactionsByIngredient: (id) => api.get(`/api/inventory/${id}/transactions`),
+};
+
+export const priceService = {
+  updatePrice: (menuItemId, data) => {
+    console.log('Updating price for menu item:', menuItemId, 'with data:', data);
+    return api.put(`/api/prices/menu/${menuItemId}`, data);
+  },
+  getHistory: () => api.get('/api/prices/history'),
+  getHistoryByMenuItem: (id) => api.get(`/api/prices/history/menu/${id}`),
+  test: () => api.get('/api/prices/test'),
+};
+
+export const promotionService = {
+  getAll: () => api.get('/api/promotions'),
+  getActive: () => api.get('/api/promotions/active'),
+  getById: (id) => api.get(`/api/promotions/${id}`),
+  create: (data) => api.post('/api/promotions', data),
+  update: (id, data) => api.put(`/api/promotions/${id}`, data),
+  delete: (id) => api.delete(`/api/promotions/${id}`),
+  toggle: (id) => api.post(`/api/promotions/${id}/toggle`),
+};

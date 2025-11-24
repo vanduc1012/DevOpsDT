@@ -2,7 +2,11 @@ import axios from 'axios';
 
 // Trong Docker, gọi API qua nginx proxy
 // Ngoài Docker, gọi trực tiếp backend
-const API_URL = process.env.REACT_APP_API_URL || 'https://devops-1-9r3z.onrender.com';
+// Force localhost for development - OVERRIDE any env variable
+const API_URL = 'http://localhost:8080';
+
+// Log để đảm bảo dùng đúng URL
+console.log('%c🔧 API URL:', 'color: blue; font-weight: bold; font-size: 14px', API_URL);
 
 const api = axios.create({
   baseURL: API_URL,
@@ -45,6 +49,9 @@ api.interceptors.request.use(
     const token = localStorage.getItem('token');
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
+      console.log('✅ Token found, adding to request header');
+    } else {
+      console.warn('⚠️ No token found in localStorage');
     }
     // Log request for debugging
     console.log('API Request:', {
@@ -52,7 +59,8 @@ api.interceptors.request.use(
       url: config.url,
       baseURL: config.baseURL,
       fullURL: `${config.baseURL}${config.url}`,
-      data: config.data
+      hasToken: !!token,
+      headers: config.headers
     });
     return config;
   },
@@ -96,12 +104,24 @@ api.interceptors.response.use(
 
     // Handle 401 and 403 errors
     if (error.response && (error.response.status === 401 || error.response.status === 403)) {
+      console.warn('⚠️ Authentication error:', {
+        status: error.response.status,
+        message: error.response.data?.message,
+        url: error.config?.url
+      });
+      
+      // Chỉ redirect nếu không phải là request đến /api/auth (đăng nhập/đăng ký)
+      const isAuthEndpoint = error.config?.url?.includes('/api/auth');
+      
+      if (!isAuthEndpoint) {
       // Token không hợp lệ hoặc user không tồn tại - xóa và redirect
       localStorage.removeItem('token');
       localStorage.removeItem('user');
       // Only redirect if not already on login page
-      if (window.location.pathname !== '/login') {
+        if (window.location.pathname !== '/login' && window.location.pathname !== '/register') {
+          console.warn('🔄 Redirecting to login due to authentication error');
         window.location.href = '/login';
+        }
       }
     }
     return Promise.reject(error);

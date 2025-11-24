@@ -150,25 +150,28 @@ function BookTable() {
               <div>
                 <h3>Menu</h3>
                 <div style={{ maxHeight: '400px', overflowY: 'auto' }}>
-                  {menuItems.map((item) => (
-                    <div
-                      key={item.id}
-                      style={{
-                        padding: '1rem',
-                        border: '1px solid #ddd',
-                        borderRadius: '4px',
-                        marginBottom: '0.5rem',
-                        cursor: 'pointer',
-                      }}
-                      onClick={() => handleAddItem(item)}
-                    >
-                      <div style={{ fontWeight: 'bold' }}>{item.name}</div>
-                      <div style={{ color: '#666', fontSize: '0.875rem' }}>{item.description}</div>
-                      <div style={{ color: '#6f4e37', fontWeight: 'bold', marginTop: '0.5rem' }}>
-                        {item.price?.toLocaleString('vi-VN')} ₫
+                  {menuItems.map((item) => {
+                    const itemId = item._id || item.id;
+                    return (
+                      <div
+                        key={itemId}
+                        style={{
+                          padding: '1rem',
+                          border: '1px solid #ddd',
+                          borderRadius: '4px',
+                          marginBottom: '0.5rem',
+                          cursor: 'pointer',
+                        }}
+                        onClick={() => handleAddItem(item)}
+                      >
+                        <div style={{ fontWeight: 'bold' }}>{item.name}</div>
+                        <div style={{ color: '#666', fontSize: '0.875rem' }}>{item.description}</div>
+                        <div style={{ color: '#6f4e37', fontWeight: 'bold', marginTop: '0.5rem' }}>
+                          {item.price?.toLocaleString('vi-VN')} ₫
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 

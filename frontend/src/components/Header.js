@@ -27,6 +27,9 @@ function Header() {
               <Link to="/admin/menu">Quản lý Menu</Link>
               <Link to="/admin/tables">Quản lý Bàn</Link>
               <Link to="/admin/orders">Quản lý Order</Link>
+              <Link to="/admin/prices">Quản lý Giá</Link>
+              <Link to="/admin/promotions">Khuyến Mãi</Link>
+              <Link to="/admin/inventory">Quản lý Kho</Link>
               <Link to="/admin/reports">Báo cáo</Link>
             </>
           )}

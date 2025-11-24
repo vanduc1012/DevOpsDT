@@ -1,9 +1,9 @@
 # Hệ Thống Quản Lý Quán Cafe
 
 ## Công Nghệ Sử Dụng
-- **Backend**: Spring Boot 3.x
+- **Backend**: Node.js + Express.js
 - **Frontend**: React 18
-- **Database**: PostgreSQL 15
+- **Database**: MongoDB (Atlas)
 - **Container**: Docker & Docker Compose
 
 ## Tính Năng
@@ -37,18 +37,28 @@
 ## Cài Đặt & Chạy
 
 ### Yêu Cầu
-- Docker Desktop
-- Docker Compose
+- Node.js 16+ (cho backend)
+- npm hoặc yarn
+- MongoDB Atlas account (hoặc MongoDB local)
 
-### Khởi Động Hệ Thống
+### Khởi Động Backend
 ```bash
-docker-compose up -d
+cd backend-nodejs
+npm install
+npm run dev
+```
+
+### Khởi Động Frontend
+```bash
+cd frontend
+npm install
+npm start
 ```
 
 ### Truy Cập
 - Frontend: http://localhost:3000
 - Backend API: http://localhost:8080
-- Database: localhost:5432
+- Database: MongoDB Atlas (cloud)
 
 ### Tài Khoản Mặc Định
 - **Root User**: 
@@ -69,7 +79,7 @@ docker-compose down -v
 ## Cấu Trúc Project
 ```
 web_cafe/
-├── backend/           # Spring Boot Application
+├── backend-nodejs/    # Node.js + Express.js Application
 ├── frontend/          # React Application
 └── docker-compose.yml # Docker configuration
 ```

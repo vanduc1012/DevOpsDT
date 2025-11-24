@@ -28,7 +28,12 @@ function TableManagement() {
     e.preventDefault();
     try {
       if (editingTable) {
-        await tableService.update(editingTable.id, formData);
+        const tableId = editingTable._id || editingTable.id;
+        if (!tableId) {
+          alert('Lỗi: Không tìm thấy ID của bàn. Vui lòng thử lại.');
+          return;
+        }
+        await tableService.update(tableId, formData);
       } else {
         await tableService.create(formData);
       }
@@ -47,22 +52,34 @@ function TableManagement() {
   };
 
   const handleDelete = async (id) => {
+    if (!id) {
+      alert('Lỗi: Không tìm thấy ID của bàn. Vui lòng thử lại.');
+      return;
+    }
+    
     if (window.confirm('Bạn có chắc muốn xóa bàn này?')) {
       try {
         await tableService.delete(id);
         loadTables();
       } catch (error) {
-        alert('Lỗi khi xóa bàn');
+        console.error('Error deleting table:', error);
+        alert('Lỗi khi xóa bàn: ' + (error.response?.data?.message || error.message));
       }
     }
   };
 
   const handleUpdateStatus = async (id, status) => {
+    if (!id) {
+      alert('Lỗi: Không tìm thấy ID của bàn. Vui lòng thử lại.');
+      return;
+    }
+    
     try {
       await tableService.updateStatus(id, status);
       loadTables();
     } catch (error) {
-      alert('Lỗi khi cập nhật trạng thái');
+      console.error('Error updating table status:', error);
+      alert('Lỗi khi cập nhật trạng thái: ' + (error.response?.data?.message || error.message));
     }
   };
 
@@ -116,30 +133,33 @@ function TableManagement() {
               </tr>
             </thead>
             <tbody>
-              {tables.map((table) => (
-                <tr key={table.id}>
-                  <td>Bàn {table.tableNumber}</td>
-                  <td>{table.capacity} người</td>
-                  <td>{getStatusBadge(table.status)}</td>
-                  <td>
-                    <select
-                      value={table.status}
-                      onChange={(e) => handleUpdateStatus(table.id, e.target.value)}
-                      style={{ marginRight: '0.5rem', padding: '0.25rem' }}
-                    >
-                      <option value="AVAILABLE">Chưa có khách</option>
-                      <option value="OCCUPIED">Đã có khách</option>
-                      <option value="PAID">Đã thanh toán</option>
-                    </select>
-                    <button className="btn btn-secondary" onClick={() => handleEdit(table)} style={{ marginRight: '0.5rem' }}>
-                      Sửa
-                    </button>
-                    <button className="btn btn-danger" onClick={() => handleDelete(table.id)}>
-                      Xóa
-                    </button>
-                  </td>
-                </tr>
-              ))}
+              {tables.map((table) => {
+                const tableId = table._id || table.id;
+                return (
+                  <tr key={tableId}>
+                    <td>Bàn {table.tableNumber}</td>
+                    <td>{table.capacity} người</td>
+                    <td>{getStatusBadge(table.status)}</td>
+                    <td>
+                      <select
+                        value={table.status}
+                        onChange={(e) => handleUpdateStatus(tableId, e.target.value)}
+                        style={{ marginRight: '0.5rem', padding: '0.25rem' }}
+                      >
+                        <option value="AVAILABLE">Chưa có khách</option>
+                        <option value="OCCUPIED">Đã có khách</option>
+                        <option value="PAID">Đã thanh toán</option>
+                      </select>
+                      <button className="btn btn-secondary" onClick={() => handleEdit(table)} style={{ marginRight: '0.5rem' }}>
+                        Sửa
+                      </button>
+                      <button className="btn btn-danger" onClick={() => handleDelete(tableId)}>
+                        Xóa
+                      </button>
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
