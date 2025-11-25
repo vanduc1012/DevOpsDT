@@ -7,7 +7,7 @@ const app = express();
 
 // Middleware
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://localhost:3000',
+  origin: process.env.CORS_ORIGIN || 'http://ec2-3-27-83-177.ap-southeast-2.compute.amazonaws.com:3000',
   credentials: true
 }));
 app.use(express.json());
