@@ -3,7 +3,8 @@ import axios from 'axios';
 // Trong Docker, gọi API qua nginx proxy
 // Ngoài Docker, gọi trực tiếp backend
 // Force localhost for development - OVERRIDE any env variable
-const API_URL = 'http://localhost:8080';
+const API_URL = 'http://ec2-3-27-83-177.ap-southeast-2.compute.amazonaws.com:8080';
+
 
 // Log để đảm bảo dùng đúng URL
 console.log('%c🔧 API URL:', 'color: blue; font-weight: bold; font-size: 14px', API_URL);
