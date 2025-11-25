@@ -6,8 +6,20 @@ const mongoose = require('mongoose');
 const app = express();
 
 // Middleware
+const allowedOrigins = [
+  process.env.CORS_ORIGIN,
+  'http://localhost:3000',
+  'http://127.0.0.1:3000',
+  'http://ec2-3-27-83-177.ap-southeast-2.compute.amazonaws.com:3000'
+].filter(Boolean);
+
 app.use(cors({
-  origin: process.env.CORS_ORIGIN || 'http://ec2-3-27-83-177.ap-southeast-2.compute.amazonaws.com:3000',
+  origin: (origin, callback) => {
+    if (!origin || allowedOrigins.includes(origin)) {
+      return callback(null, true);
+    }
+    return callback(new Error('Not allowed by CORS'));
+  },
   credentials: true
 }));
 app.use(express.json());
