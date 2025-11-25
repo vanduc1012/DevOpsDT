@@ -11,6 +11,7 @@ console.log('%c🔧 API URL:', 'color: blue; font-weight: bold; font-size: 14px'
 
 const api = axios.create({
   baseURL: API_URL,
+  timeout: 0, // disable axios timeout; rely on browser/network timeouts
   headers: {
     'Content-Type': 'application/json',
   },
