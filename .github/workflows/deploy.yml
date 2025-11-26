@@ -1,0 +1,41 @@
+name: CI/CD Deploy Node.js + React
+
+# Khi push code lên nhánh main
+on:
+  push:
+    branches:
+      - main
+
+jobs:
+  build-and-deploy:
+    runs-on: ubuntu-latest
+
+    steps:
+    # 1️⃣ Checkout code từ GitHub
+    - name: Checkout code
+      uses: actions/checkout@v3
+
+    # 2️⃣ Cài Node.js
+    - name: Set up Node.js
+      uses: actions/setup-node@v3
+      with:
+        node-version: '20'  # Node.js version của bạn
+
+    # 3️⃣ Cài dependencies backend
+    - name: Install backend dependencies
+      run: |
+        cd backend-nodejs
+        npm install
+
+    # 4️⃣ Cài dependencies frontend và build React
+    - name: Install frontend dependencies and build
+      run: |
+        cd frontend
+        npm install
+        npm run build
+
+    # 5️⃣ SSH vào AWS EC2 và deploy
+    - name: Deploy to AWS EC2
+      uses: appleboy/ssh-action@v0.1.9
+      with:
+        host: ${{ secrets.EC2_HOST }}        # Elastic IP hoặc Public IP của E_
