@@ -1,41 +1,34 @@
-name: CI/CD Deploy Node.js + React
+name: Deploy DevOpsDT to EC2
 
-# Khi push code lên nhánh main
+# Khi nào workflow chạy
 on:
   push:
     branches:
-      - main
+      - main                # tự động chạy khi push lên main
+  workflow_dispatch:        # cho phép chạy thủ công từ GitHub UI
 
 jobs:
-  build-and-deploy:
+  deploy:
     runs-on: ubuntu-latest
 
     steps:
-    # 1️⃣ Checkout code từ GitHub
-    - name: Checkout code
-      uses: actions/checkout@v3
+      # 1. Checkout code từ repo
+      - name: Checkout repository
+        uses: actions/checkout@v3
 
-    # 2️⃣ Cài Node.js
-    - name: Set up Node.js
-      uses: actions/setup-node@v3
-      with:
-        node-version: '20'  # Node.js version của bạn
-
-    # 3️⃣ Cài dependencies backend
-    - name: Install backend dependencies
-      run: |
-        cd backend-nodejs
-        npm install
-
-    # 4️⃣ Cài dependencies frontend và build React
-    - name: Install frontend dependencies and build
-      run: |
-        cd frontend
-        npm install
-        npm run build
-
-    # 5️⃣ SSH vào AWS EC2 và deploy
-    - name: Deploy to AWS EC2
-      uses: appleboy/ssh-action@v0.1.9
-      with:
-        host: ${{ secrets.EC2_HOST }}        # Elastic IP hoặc Public IP của E_
+      # 2. Deploy code lên EC2 bằng SSH
+      - name: Deploy via SSH
+        uses: appleboy/ssh-action@v0.1.9
+        with:
+          host: ${{ secrets.EC2_HOST }}       # Elastic IP EC2
+          username: ${{ secrets.EC2_USER }}   # user trên EC2 (ubuntu)
+          key: ${{ secrets.EC2_KEY }}         # private key SSH
+          port: 22
+          script: |
+            echo "Starting deployment on EC2..."
+            cd /home/ubuntu/DevOpsDT           # thư mục project trên EC2
+            git reset --hard                   # đảm bảo code sạch trước khi pull
+            git pull origin main               # lấy code mới
+            npm install                        # cài dependencies
+            pm2 restart all                     # restart tất cả app PM2
+            echo "Deployment finished successfully!"
