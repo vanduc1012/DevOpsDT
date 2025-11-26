@@ -98,13 +98,13 @@ function Profile() {
             <div className="profile-field">
               <p className="profile-label">Ngày tạo</p>
               <p className="profile-value">
-                {profile.createdAt ? new Date(profile.createdAt).toLocaleDateString('vi-VN') : '-'}
+              {profile.createdAt ? new Date(profile.createdAt).toLocaleString('vi-VN') : '-'}
               </p>
             </div>
             <div className="profile-field">
               <p className="profile-label">Lần cập nhật cuối</p>
               <p className="profile-value">
-                {profile.updatedAt ? new Date(profile.updatedAt).toLocaleDateString('vi-VN') : '-'}
+              {profile.updatedAt ? new Date(profile.updatedAt).toLocaleString('vi-VN') : '-'}
               </p>
             </div>
           </div>
