@@ -73,6 +73,7 @@ const promotionRoutes = require('./routes/promotions');
 const inventoryRoutes = require('./routes/inventory');
 const paymentConfigRoutes = require('./routes/paymentConfig');
 const userRoutes = require('./routes/users');
+const reviewRoutes = require('./routes/reviews');
 
 app.use('/api/auth', authRoutes);
 app.use('/api/menu', menuRoutes);
@@ -84,6 +85,7 @@ app.use('/api/promotions', promotionRoutes);
 app.use('/api/inventory', inventoryRoutes);
 app.use('/api/payment-config', paymentConfigRoutes);
 app.use('/api/users', userRoutes);
+app.use('/api/reviews', reviewRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {

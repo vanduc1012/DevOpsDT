@@ -24,6 +24,7 @@ function Home() {
     { to: '/admin/payment', icon: '💳', title: 'Thanh Toán', desc: 'Cấu hình QR & cổng thanh toán' },
     { to: '/admin/users', icon: '👥', title: 'Quản Lý User', desc: 'Phân quyền user/admin' },
     { to: '/admin/reports', icon: '📊', title: 'Báo Cáo', desc: 'Phân tích doanh thu' },
+    { to: '/admin/reviews', icon: '⭐', title: 'Quản Lý Đánh Giá', desc: 'Duyệt và quản lý đánh giá' },
   ];
 
   const shortcuts = isAdmin ? adminShortcuts : userShortcuts;

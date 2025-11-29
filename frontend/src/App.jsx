@@ -14,6 +14,7 @@ import InventoryManagement from './pages/InventoryManagement';
 import PaymentManagement from './pages/PaymentManagement';
 import UserManagement from './pages/UserManagement';
 import Reports from './pages/Reports';
+import ReviewManagement from './pages/ReviewManagement';
 import Profile from './pages/Profile';
 import BookTable from './pages/BookTable';
 import MyOrders from './pages/MyOrders';
@@ -49,6 +50,7 @@ function App() {
           <Route path="/admin/payment" element={<PrivateRoute adminOnly={true}><PaymentManagement /></PrivateRoute>} />
           <Route path="/admin/users" element={<PrivateRoute adminOnly={true}><UserManagement /></PrivateRoute>} />
           <Route path="/admin/reports" element={<PrivateRoute adminOnly={true}><Reports /></PrivateRoute>} />
+          <Route path="/admin/reviews" element={<PrivateRoute adminOnly={true}><ReviewManagement /></PrivateRoute>} />
           
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

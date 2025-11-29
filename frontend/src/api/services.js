@@ -94,6 +94,22 @@ export const inventoryService = {
   getTransactionsByIngredient: (id) => api.get(`/api/inventory/${id}/transactions`),
 };
 
+export const reviewService = {
+  getByMenuItem: (menuItemId, status = 'APPROVED') => {
+    return api.get(`/api/reviews/menu/${menuItemId}`, { params: { status } });
+  },
+  getStats: (menuItemId) => {
+    return api.get(`/api/reviews/menu/${menuItemId}/stats`);
+  },
+  getAll: (params = {}) => {
+    return api.get('/api/reviews', { params });
+  },
+  create: (data) => api.post('/api/reviews', data),
+  update: (id, data) => api.put(`/api/reviews/${id}`, data),
+  delete: (id) => api.delete(`/api/reviews/${id}`),
+  updateStatus: (id, status) => api.patch(`/api/reviews/${id}/status`, { status }),
+};
+
 export const priceService = {
   updatePrice: (menuItemId, data) => {
     console.log('Updating price for menu item:', menuItemId, 'with data:', data);

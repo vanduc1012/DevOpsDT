@@ -1,11 +1,13 @@
 import React, { useState, useEffect } from 'react';
 import { menuService, promotionService } from '../api/services';
+import ReviewSection from '../components/ReviewSection';
 
 function ViewMenu() {
   const [menuItems, setMenuItems] = useState([]);
   const [promotions, setPromotions] = useState([]);
   const [filter, setFilter] = useState('all');
   const [searchTerm, setSearchTerm] = useState('');
+  const [selectedItem, setSelectedItem] = useState(null);
 
   useEffect(() => {
     loadMenu();
@@ -260,6 +262,7 @@ function ViewMenu() {
                   e.currentTarget.style.transform = 'translateY(0)';
                   e.currentTarget.style.boxShadow = '0 2px 4px rgba(0,0,0,0.1)';
                 }}
+                onClick={() => setSelectedItem(item)}
               >
                 <div style={{ fontWeight: 'bold', fontSize: '1.25rem', marginBottom: '0.5rem', color: '#6f4e37' }}>
                   {item.name}
@@ -267,6 +270,17 @@ function ViewMenu() {
                 {item.category && (
                   <div style={{ fontSize: '0.875rem', color: '#999', marginBottom: '0.5rem' }}>
                     📁 {item.category}
+                  </div>
+                )}
+                {(item.averageRating > 0 || item.totalReviews > 0) && (
+                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+                    <span style={{ color: '#ffc107' }}>
+                      {'★'.repeat(Math.round(item.averageRating || 0))}
+                      {'☆'.repeat(5 - Math.round(item.averageRating || 0))}
+                    </span>
+                    <span style={{ color: '#666' }}>
+                      {item.averageRating?.toFixed(1) || '0.0'} ({item.totalReviews || 0})
+                    </span>
                   </div>
                 )}
                 <div style={{ color: '#666', fontSize: '0.9rem', marginBottom: '1rem', minHeight: '40px' }}>
@@ -328,6 +342,46 @@ function ViewMenu() {
           </div>
         )}
       </div>
+
+      {/* Review Modal */}
+      {selectedItem && (
+        <div className="modal-overlay" onClick={() => setSelectedItem(null)}>
+          <div className="modal" onClick={(e) => e.stopPropagation()} style={{ maxWidth: '800px', maxHeight: '90vh', overflowY: 'auto' }}>
+            <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+              <h2 style={{ margin: 0, color: '#6f4e37' }}>{selectedItem.name}</h2>
+              <button
+                onClick={() => setSelectedItem(null)}
+                style={{
+                  background: 'none',
+                  border: 'none',
+                  fontSize: '1.5rem',
+                  cursor: 'pointer',
+                  color: '#666',
+                  padding: '0.25rem 0.5rem'
+                }}
+              >
+                ×
+              </button>
+            </div>
+            
+            <div style={{ marginBottom: '1rem' }}>
+              {selectedItem.category && (
+                <div style={{ fontSize: '0.875rem', color: '#999', marginBottom: '0.5rem' }}>
+                  📁 {selectedItem.category}
+                </div>
+              )}
+              <div style={{ color: '#666', marginBottom: '1rem' }}>
+                {selectedItem.description || 'Không có mô tả'}
+              </div>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#6f4e37' }}>
+                {selectedItem.price?.toLocaleString('vi-VN')} ₫
+              </div>
+            </div>
+
+            <ReviewSection menuItemId={selectedItem._id || selectedItem.id} />
+          </div>
+        </div>
+      )}
     </div>
   );
 }
