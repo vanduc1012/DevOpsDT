@@ -6,25 +6,38 @@ const { authMiddleware, adminMiddleware } = require('../middleware/auth');
 // Get daily report (admin only)
 router.get('/daily', authMiddleware, adminMiddleware, async (req, res) => {
   try {
-    const { date } = req.query;
+    const { date, includeOrders } = req.query;
     const targetDate = date ? new Date(date) : new Date();
     const startOfDay = new Date(targetDate.setHours(0, 0, 0, 0));
     const endOfDay = new Date(targetDate.setHours(23, 59, 59, 999));
 
     const orders = await Order.find({
-      orderTime: { $gte: startOfDay, $lte: endOfDay },
-      status: 'COMPLETED'
-    });
+      orderTime: { $gte: startOfDay, $lte: endOfDay }
+    }).populate('userId', 'fullName email').sort({ orderTime: -1 });
 
-    const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
-    const totalCustomers = orders.length;
+    const completedOrders = orders.filter(o => o.status === 'COMPLETED');
+    const pendingOrders = orders.filter(o => o.status === 'PENDING' || o.status === 'CONFIRMED' || o.status === 'PREPARING');
+    const cancelledOrders = orders.filter(o => o.status === 'CANCELLED');
 
-    res.json({
+    const totalRevenue = completedOrders.reduce((sum, order) => sum + order.totalAmount, 0);
+    const totalCustomers = new Set(orders.map(o => o.userId?._id?.toString()).filter(Boolean)).size;
+
+    const reportData = {
       date: startOfDay.toISOString().split('T')[0],
       totalRevenue,
       totalCustomers,
-      totalOrders: orders.length
-    });
+      totalOrders: orders.length,
+      completedOrders: completedOrders.length,
+      pendingOrders: pendingOrders.length,
+      cancelledOrders: cancelledOrders.length
+    };
+
+    // Include order details if requested
+    if (includeOrders === 'true') {
+      reportData.orders = orders;
+    }
+
+    res.json(reportData);
   } catch (error) {
     console.error('Error getting daily report:', error);
     res.status(500).json({
@@ -67,7 +80,7 @@ router.get('/today', authMiddleware, adminMiddleware, async (req, res) => {
 // Get monthly report (admin only)
 router.get('/monthly', authMiddleware, adminMiddleware, async (req, res) => {
   try {
-    const { year, month } = req.query;
+    const { year, month, includeOrders } = req.query;
     const targetYear = parseInt(year) || new Date().getFullYear();
     const targetMonth = parseInt(month) || new Date().getMonth() + 1;
 
@@ -75,20 +88,33 @@ router.get('/monthly', authMiddleware, adminMiddleware, async (req, res) => {
     const endOfMonth = new Date(targetYear, targetMonth, 0, 23, 59, 59, 999);
 
     const orders = await Order.find({
-      orderTime: { $gte: startOfMonth, $lte: endOfMonth },
-      status: 'COMPLETED'
-    });
+      orderTime: { $gte: startOfMonth, $lte: endOfMonth }
+    }).populate('userId', 'fullName email').sort({ orderTime: -1 });
 
-    const totalRevenue = orders.reduce((sum, order) => sum + order.totalAmount, 0);
-    const totalCustomers = orders.length;
+    const completedOrders = orders.filter(o => o.status === 'COMPLETED');
+    const pendingOrders = orders.filter(o => o.status === 'PENDING' || o.status === 'CONFIRMED' || o.status === 'PREPARING');
+    const cancelledOrders = orders.filter(o => o.status === 'CANCELLED');
 
-    res.json({
+    const totalRevenue = completedOrders.reduce((sum, order) => sum + order.totalAmount, 0);
+    const totalCustomers = new Set(orders.map(o => o.userId?._id?.toString()).filter(Boolean)).size;
+
+    const reportData = {
       year: targetYear,
       month: targetMonth,
       totalRevenue,
       totalCustomers,
-      totalOrders: orders.length
-    });
+      totalOrders: orders.length,
+      completedOrders: completedOrders.length,
+      pendingOrders: pendingOrders.length,
+      cancelledOrders: cancelledOrders.length
+    };
+
+    // Include order details if requested
+    if (includeOrders === 'true') {
+      reportData.orders = orders;
+    }
+
+    res.json(reportData);
   } catch (error) {
     console.error('Error getting monthly report:', error);
     res.status(500).json({

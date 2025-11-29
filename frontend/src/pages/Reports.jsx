@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { reportService } from '../api/services';
+import { exportToPDF, exportToExcel } from '../utils/exportUtils';
 
 function Reports() {
   const [report, setReport] = useState(null);
@@ -9,6 +10,8 @@ function Reports() {
     year: new Date().getFullYear(),
     month: new Date().getMonth() + 1
   });
+  const [orderDetails, setOrderDetails] = useState([]);
+  const [isExporting, setIsExporting] = useState(false);
 
   useEffect(() => {
     loadReport();
@@ -23,6 +26,13 @@ function Reports() {
         response = await reportService.getMonthlyReport(selectedMonth.year, selectedMonth.month);
       }
       setReport(response.data);
+      
+      // Load order details for export
+      if (response.data.orders) {
+        setOrderDetails(response.data.orders);
+      } else {
+        setOrderDetails([]);
+      }
     } catch (error) {
       console.error('Error loading report:', error);
     }
@@ -37,6 +47,38 @@ function Reports() {
     return `${selectedMonth.year}-${String(selectedMonth.month).padStart(2, '0')}`;
   };
 
+  const handleExportPDF = () => {
+    if (!report) return;
+    setIsExporting(true);
+    try {
+      const dateString = reportType === 'daily' 
+        ? selectedDate 
+        : `${selectedMonth.year}-${String(selectedMonth.month).padStart(2, '0')}`;
+      exportToPDF(report, reportType, dateString);
+    } catch (error) {
+      console.error('Error exporting PDF:', error);
+      alert('Có lỗi xảy ra khi xuất PDF. Vui lòng thử lại.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
+  const handleExportExcel = () => {
+    if (!report) return;
+    setIsExporting(true);
+    try {
+      const dateString = reportType === 'daily' 
+        ? selectedDate 
+        : `${selectedMonth.year}-${String(selectedMonth.month).padStart(2, '0')}`;
+      exportToExcel(report, reportType, dateString, orderDetails);
+    } catch (error) {
+      console.error('Error exporting Excel:', error);
+      alert('Có lỗi xảy ra khi xuất Excel. Vui lòng thử lại.');
+    } finally {
+      setIsExporting(false);
+    }
+  };
+
   if (!report) {
     return <div className="loading">Đang tải...</div>;
   }
@@ -44,7 +86,27 @@ function Reports() {
   return (
     <div className="container">
       <div className="card">
-        <h2>Báo Cáo Doanh Thu</h2>
+        <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center', marginBottom: '1.5rem' }}>
+          <h2 style={{ margin: 0 }}>Báo Cáo Doanh Thu</h2>
+          <div style={{ display: 'flex', gap: '0.75rem' }}>
+            <button 
+              onClick={handleExportPDF} 
+              className="btn btn-export btn-export-pdf"
+              disabled={isExporting || !report}
+              title="Xuất báo cáo PDF"
+            >
+              📄 Xuất PDF
+            </button>
+            <button 
+              onClick={handleExportExcel} 
+              className="btn btn-export btn-export-excel"
+              disabled={isExporting || !report}
+              title="Xuất báo cáo Excel"
+            >
+              📊 Xuất Excel
+            </button>
+          </div>
+        </div>
         
         <div style={{ marginBottom: '2rem' }}>
           <div className="form-group" style={{ maxWidth: '300px', marginBottom: '1rem' }}>

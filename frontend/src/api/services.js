@@ -70,13 +70,13 @@ export const orderService = {
 };
 
 export const reportService = {
-  getDailyReport: (date) => {
-    const params = date ? { date } : {};
+  getDailyReport: (date, includeOrders = true) => {
+    const params = date ? { date, includeOrders } : { includeOrders };
     return api.get('/api/reports/daily', { params });
   },
   getTodayReport: () => api.get('/api/reports/today'),
-  getMonthlyReport: (year, month) => {
-    return api.get('/api/reports/monthly', { params: { year, month } });
+  getMonthlyReport: (year, month, includeOrders = true) => {
+    return api.get('/api/reports/monthly', { params: { year, month, includeOrders } });
   },
 };
 
