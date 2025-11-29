@@ -272,17 +272,24 @@ function ViewMenu() {
                     📁 {item.category}
                   </div>
                 )}
-                {(item.averageRating > 0 || item.totalReviews > 0) && (
-                  <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
-                    <span style={{ color: '#ffc107' }}>
-                      {'★'.repeat(Math.round(item.averageRating || 0))}
-                      {'☆'.repeat(5 - Math.round(item.averageRating || 0))}
-                    </span>
-                    <span style={{ color: '#666' }}>
-                      {item.averageRating?.toFixed(1) || '0.0'} ({item.totalReviews || 0})
-                    </span>
-                  </div>
-                )}
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '0.5rem', fontSize: '0.875rem' }}>
+                  {item.averageRating > 0 || item.totalReviews > 0 ? (
+                    <>
+                      <span style={{ color: '#ffc107', fontSize: '1rem' }}>
+                        {'★'.repeat(Math.round(item.averageRating || 0))}
+                        {'☆'.repeat(5 - Math.round(item.averageRating || 0))}
+                      </span>
+                      <span style={{ color: '#666', fontWeight: '600' }}>
+                        {item.averageRating?.toFixed(1) || '0.0'}
+                      </span>
+                      <span style={{ color: '#999', fontSize: '0.8rem' }}>
+                        ({item.totalReviews || 0} đánh giá)
+                      </span>
+                    </>
+                  ) : (
+                    <span style={{ color: '#999', fontSize: '0.8rem' }}>⭐ Chưa có đánh giá</span>
+                  )}
+                </div>
                 <div style={{ color: '#666', fontSize: '0.9rem', marginBottom: '1rem', minHeight: '40px' }}>
                   {item.description || 'Không có mô tả'}
                 </div>

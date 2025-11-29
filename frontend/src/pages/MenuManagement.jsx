@@ -107,6 +107,7 @@ function MenuManagement() {
                 <th>Mô tả</th>
                 <th>Giá</th>
                 <th>Danh mục</th>
+                <th>Đánh giá</th>
                 <th>Trạng thái</th>
                 <th>Thao tác</th>
               </tr>
@@ -120,6 +121,24 @@ function MenuManagement() {
                     <td>{item.description}</td>
                     <td>{item.price?.toLocaleString('vi-VN')} ₫</td>
                     <td>{item.category}</td>
+                    <td>
+                      {item.averageRating > 0 || item.totalReviews > 0 ? (
+                        <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem' }}>
+                          <span style={{ color: '#ffc107', fontSize: '1rem' }}>
+                            {'★'.repeat(Math.round(item.averageRating || 0))}
+                            {'☆'.repeat(5 - Math.round(item.averageRating || 0))}
+                          </span>
+                          <span style={{ fontSize: '0.875rem', color: '#666' }}>
+                            {item.averageRating?.toFixed(1) || '0.0'}
+                          </span>
+                          <span style={{ fontSize: '0.75rem', color: '#999' }}>
+                            ({item.totalReviews || 0})
+                          </span>
+                        </div>
+                      ) : (
+                        <span style={{ color: '#999', fontSize: '0.875rem' }}>Chưa có đánh giá</span>
+                      )}
+                    </td>
                     <td>
                       <span className={`badge ${item.available ? 'badge-available' : 'badge-cancelled'}`}>
                         {item.available ? 'Còn hàng' : 'Hết hàng'}

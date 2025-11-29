@@ -145,7 +145,14 @@ function ReviewManagement() {
                 reviews.map((review) => (
                   <tr key={review._id}>
                     <td>
-                      <strong>{review.menuItemId?.name || 'N/A'}</strong>
+                      <div>
+                        <strong>{review.menuItemId?.name || 'N/A'}</strong>
+                        {review.menuItemId?._id && (
+                          <div style={{ fontSize: '0.75rem', color: '#999', marginTop: '0.25rem' }}>
+                            ID: {review.menuItemId._id.toString().substring(0, 8)}...
+                          </div>
+                        )}
+                      </div>
                     </td>
                     <td>
                       {review.userId?.fullName || review.userId?.username || 'N/A'}
