@@ -1,6 +1,7 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { authService } from '../api/services';
+import Footer from '../components/Footer';
 
 function Home() {
   const isAdmin = authService.isAdmin();
@@ -27,61 +28,64 @@ function Home() {
   const shortcuts = isAdmin ? adminShortcuts : userShortcuts;
 
   return (
-    <div className="container home-layout">
-      <section className="home-hero card">
-        <div>
-          <span className="home-hero__badge">{isAdmin ? 'Admin Dashboard' : 'Khách hàng thân thiết'}</span>
-          <h1>☕ Quản Lý Quán Cafe</h1>
-          <p>
-            {isAdmin
-              ? 'Theo dõi hoạt động, tối ưu quy trình phục vụ và đưa ra quyết định nhanh chóng.'
-              : 'Đặt bàn, chọn món và thanh toán online chỉ với vài thao tác đơn giản.'}
-          </p>
-          <div className="home-hero__actions">
-            <Link to={isAdmin ? '/admin/orders' : '/order-online'}>Bắt đầu ngay</Link>
-            <Link to={isAdmin ? '/admin/reports' : '/menu'} className="secondary">
-              {isAdmin ? 'Xem báo cáo' : 'Khám phá menu'}
-            </Link>
-          </div>
-        </div>
-        <div className="home-hero__stats">
+    <>
+      <div className="container home-layout">
+        <section className="home-hero card">
           <div>
-            <strong>{isAdmin ? '24+' : '200+'}</strong>
-            <span>{isAdmin ? 'Báo cáo/Tháng' : 'Món được yêu thích'}</span>
+            <span className="home-hero__badge">{isAdmin ? 'Admin Dashboard' : 'Khách hàng thân thiết'}</span>
+            <h1>☕ Quản Lý Quán Cafe</h1>
+            <p>
+              {isAdmin
+                ? 'Theo dõi hoạt động, tối ưu quy trình phục vụ và đưa ra quyết định nhanh chóng.'
+                : 'Đặt bàn, chọn món và thanh toán online chỉ với vài thao tác đơn giản.'}
+            </p>
+            <div className="home-hero__actions">
+              <Link to={isAdmin ? '/admin/orders' : '/order-online'}>Bắt đầu ngay</Link>
+              <Link to={isAdmin ? '/admin/reports' : '/menu'} className="secondary">
+                {isAdmin ? 'Xem báo cáo' : 'Khám phá menu'}
+              </Link>
+            </div>
           </div>
-          <div>
-            <strong>{isAdmin ? '8' : '4'}</strong>
-            <span>{isAdmin ? 'Module chính' : 'Bước đặt món'}</span>
+          <div className="home-hero__stats">
+            <div>
+              <strong>{isAdmin ? '24+' : '200+'}</strong>
+              <span>{isAdmin ? 'Báo cáo/Tháng' : 'Món được yêu thích'}</span>
+            </div>
+            <div>
+              <strong>{isAdmin ? '8' : '4'}</strong>
+              <span>{isAdmin ? 'Module chính' : 'Bước đặt món'}</span>
+            </div>
+            <div>
+              <strong>{isAdmin ? '100%' : '5⭐'}</strong>
+              <span>{isAdmin ? 'Kiểm soát real-time' : 'Trải nghiệm tiện lợi'}</span>
+            </div>
           </div>
-          <div>
-            <strong>{isAdmin ? '100%' : '5⭐'}</strong>
-            <span>{isAdmin ? 'Kiểm soát real-time' : 'Trải nghiệm tiện lợi'}</span>
-          </div>
-        </div>
-      </section>
+        </section>
 
-      <section className="home-shortcuts">
-        <div className="home-section-header">
-          <div>
-            <p>{isAdmin ? 'Danh mục quản trị' : 'Trải nghiệm khách hàng'}</p>
-            <h2>{isAdmin ? 'Tất cả công cụ trong một nơi' : 'Chọn chức năng bạn cần'}</h2>
+        <section className="home-shortcuts">
+          <div className="home-section-header">
+            <div>
+              <p>{isAdmin ? 'Danh mục quản trị' : 'Trải nghiệm khách hàng'}</p>
+              <h2>{isAdmin ? 'Tất cả công cụ trong một nơi' : 'Chọn chức năng bạn cần'}</h2>
+            </div>
+            <span>{shortcuts.length} tính năng</span>
           </div>
-          <span>{shortcuts.length} tính năng</span>
-        </div>
 
-        <div className="grid home-grid">
-          {shortcuts.map((item) => (
-            <Link key={item.to} to={item.to} className="card home-card">
-              <div className="home-card__icon">{item.icon}</div>
-              <div>
-                <h3>{item.title}</h3>
-                <p>{item.desc}</p>
-              </div>
-            </Link>
-          ))}
-        </div>
-      </section>
-    </div>
+          <div className="grid home-grid">
+            {shortcuts.map((item) => (
+              <Link key={item.to} to={item.to} className="card home-card">
+                <div className="home-card__icon">{item.icon}</div>
+                <div>
+                  <h3>{item.title}</h3>
+                  <p>{item.desc}</p>
+                </div>
+              </Link>
+            ))}
+          </div>
+        </section>
+      </div>
+      <Footer />
+    </>
   );
 }
 
