@@ -2,6 +2,7 @@ import React from 'react';
 import { Link } from 'react-router-dom';
 import { authService } from '../api/services';
 import Footer from '../components/Footer';
+import HeroSlider from '../components/HeroSlider';
 
 function Home() {
   const isAdmin = authService.isAdmin();
@@ -61,6 +62,8 @@ function Home() {
             </div>
           </div>
         </section>
+
+        <HeroSlider />
 
         <section className="home-shortcuts">
           <div className="home-section-header">
