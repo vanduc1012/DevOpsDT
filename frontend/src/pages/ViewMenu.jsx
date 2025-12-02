@@ -241,6 +241,10 @@ function ViewMenu() {
             const itemId = item._id || item.id;
             const priceInfo = calculatePriceWithPromotion(item);
             const hasPromotion = priceInfo.promotion !== null;
+            const imageSrc =
+              item.imageUrl && item.imageUrl.trim() !== ''
+                ? item.imageUrl
+                : 'https://via.placeholder.com/400x240?text=Coffee';
 
             return (
               <div
@@ -264,6 +268,28 @@ function ViewMenu() {
                 }}
                 onClick={() => setSelectedItem(item)}
               >
+                {imageSrc && (
+                  <div
+                    style={{
+                      marginBottom: '0.75rem',
+                      borderRadius: '8px',
+                      overflow: 'hidden',
+                      height: '160px',
+                      backgroundColor: '#f5f5f5',
+                    }}
+                  >
+                    <img
+                      src={imageSrc}
+                      alt={item.name}
+                      style={{
+                        width: '100%',
+                        height: '100%',
+                        objectFit: 'cover',
+                        display: 'block',
+                      }}
+                    />
+                  </div>
+                )}
                 <div style={{ fontWeight: 'bold', fontSize: '1.25rem', marginBottom: '0.5rem', color: '#6f4e37' }}>
                   {item.name}
                 </div>
