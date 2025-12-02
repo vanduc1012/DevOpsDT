@@ -32,6 +32,7 @@ function Home() {
   return (
     <>
       <div className="container home-layout">
+        {/* Hero giới thiệu chính ở phía trên */}
         <section className="home-hero card">
           <div>
             <span className="home-hero__badge">{isAdmin ? 'Admin Dashboard' : 'Khách hàng thân thiết'}</span>
@@ -64,8 +65,7 @@ function Home() {
           </div>
         </section>
 
-        <HeroSlider />
-
+        {/* Khối chức năng (Xem Menu, Đặt Bàn, ...) nằm dưới hero */}
         <section className="home-shortcuts">
           <div className="home-section-header">
             <div>
@@ -87,6 +87,9 @@ function Home() {
             ))}
           </div>
         </section>
+
+        {/* Hero image/slider now comes after text hero */}
+        <HeroSlider />
       </div>
       <Footer />
     </>
