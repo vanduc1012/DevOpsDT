@@ -21,11 +21,68 @@ function MenuManagement() {
   const loadMenuItems = async () => {
     try {
       const response = await menuService.getAll();
-      setMenuItems(response.data);
+      const items = response.data || [];
+      setMenuItems(items);
+      
+      // Auto-fix product "123" after loading
+      await autoFixProduct123(items);
     } catch (error) {
       console.error('Error loading menu items:', error);
     }
   };
+
+  // Auto-fix product "123" to "Sữa chua" with image
+  const autoFixProduct123 = async (items) => {
+    try {
+      console.log('🔍 Đang kiểm tra sản phẩm "123"...');
+      console.log('📦 Tổng số sản phẩm:', items.length);
+      
+      const product123 = items.find(item => item.name === '123');
+      console.log('🔎 Kết quả tìm kiếm:', product123 ? 'Tìm thấy' : 'Không tìm thấy');
+      
+      if (product123) {
+        const itemId = product123._id || product123.id;
+        console.log('🆔 ID sản phẩm:', itemId);
+        console.log('📝 Tên hiện tại:', product123.name);
+        console.log('🖼️ ImageUrl hiện tại:', product123.imageUrl);
+        
+        // Only update if name is still "123" or imageUrl is missing
+        const needsUpdate = product123.name === '123' || !product123.imageUrl || product123.imageUrl.trim() === '';
+        console.log('🔄 Cần cập nhật?', needsUpdate);
+        
+        if (needsUpdate) {
+          console.log('⏳ Đang cập nhật sản phẩm...');
+          const updateData = {
+            name: 'Sữa chua',
+            imageUrl: '/images/anhsuachua.jpg',
+            description: product123.description || 'Sữa chua thơm ngon, bổ dưỡng',
+            price: product123.price,
+            category: product123.category || 'Sữa',
+            available: product123.available !== undefined ? product123.available : true
+          };
+          console.log('📤 Dữ liệu cập nhật:', updateData);
+          
+          const response = await menuService.update(itemId, updateData);
+          console.log('✅ Đã tự động cập nhật sản phẩm "123" thành "Sữa chua"');
+          console.log('📥 Phản hồi từ server:', response.data);
+          
+          // Reload menu items after update
+          setTimeout(() => {
+            loadMenuItems();
+          }, 500);
+        } else {
+          console.log('ℹ️ Sản phẩm đã được cập nhật rồi, không cần cập nhật lại');
+        }
+      } else {
+        console.log('ℹ️ Không tìm thấy sản phẩm có tên "123"');
+      }
+    } catch (error) {
+      console.error('❌ Lỗi khi tự động cập nhật sản phẩm 123:', error);
+      console.error('📋 Chi tiết lỗi:', error.response?.data || error.message);
+      alert('Lỗi khi cập nhật sản phẩm: ' + (error.response?.data?.message || error.message));
+    }
+  };
+
 
   const handleSubmit = async (e) => {
     e.preventDefault();
@@ -37,8 +94,10 @@ function MenuManagement() {
           return;
         }
         await menuService.update(itemId, formData);
+        alert('✅ Đã cập nhật món thành công!');
       } else {
         await menuService.create(formData);
+        alert('✅ Đã thêm món mới thành công!');
       }
       setShowModal(false);
       resetForm();
@@ -63,6 +122,7 @@ function MenuManagement() {
     if (window.confirm('Bạn có chắc muốn xóa món này?')) {
       try {
         await menuService.delete(id);
+        alert('✅ Đã xóa món thành công!');
         loadMenuItems();
       } catch (error) {
         console.error('Error deleting menu item:', error);
@@ -206,7 +266,60 @@ function MenuManagement() {
                   type="text"
                   value={formData.imageUrl}
                   onChange={(e) => setFormData({ ...formData, imageUrl: e.target.value })}
+                  placeholder="/images/anhsuachua.jpg"
                 />
+                {formData.imageUrl && (
+                  <div style={{ marginTop: '0.5rem' }}>
+                    <img
+                      src={
+                        formData.imageUrl.startsWith('http://') || formData.imageUrl.startsWith('https://')
+                          ? formData.imageUrl
+                          : formData.imageUrl.startsWith('/')
+                          ? formData.imageUrl
+                          : `/images/${formData.imageUrl}`
+                      }
+                      alt="Preview"
+                      style={{ 
+                        maxWidth: '200px', 
+                        maxHeight: '150px', 
+                        objectFit: 'cover', 
+                        borderRadius: '4px', 
+                        border: '1px solid #ddd',
+                        display: 'block'
+                      }}
+                      onError={(e) => {
+                        console.error('Error loading image:', formData.imageUrl);
+                        e.target.style.display = 'none';
+                      }}
+                      onLoad={() => {
+                        console.log('Image loaded successfully:', formData.imageUrl);
+                      }}
+                    />
+                  </div>
+                )}
+                <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: '#666' }}>
+                  <strong>Ảnh có sẵn:</strong>
+                  <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
+                    {['anhsuachua.jpg', 'anhbacxiu.jpg', 'anhbanhflan.jpg', 'anhbanhsungbocroissants.jpg', 'anhbanhtiramisu.jpg', 'anhcafedaxay.jpg', 'anhsinhtobo.jpg', 'anhsinhtodau.jpg', 'anhsinhtoxoai.jpg', 'anhtradao.jpg', 'anhtrachanh.jpg', 'anhtrasuatranchau.jpg', 'anhtraxanhkhongdo.jpg'].map((img) => (
+                      <button
+                        key={img}
+                        type="button"
+                        onClick={() => setFormData({ ...formData, imageUrl: `/images/${img}` })}
+                        style={{
+                          padding: '0.25rem 0.5rem',
+                          fontSize: '0.75rem',
+                          background: formData.imageUrl === `/images/${img}` ? '#6f4e37' : '#f0f0f0',
+                          color: formData.imageUrl === `/images/${img}` ? '#fff' : '#333',
+                          border: '1px solid #ddd',
+                          borderRadius: '4px',
+                          cursor: 'pointer'
+                        }}
+                      >
+                        {img.replace('.jpg', '')}
+                      </button>
+                    ))}
+                  </div>
+                </div>
               </div>
               <div className="form-group">
                 <label>
@@ -235,3 +348,4 @@ function MenuManagement() {
 }
 
 export default MenuManagement;
+

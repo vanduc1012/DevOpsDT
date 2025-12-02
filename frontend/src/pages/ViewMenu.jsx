@@ -241,10 +241,17 @@ function ViewMenu() {
             const itemId = item._id || item.id;
             const priceInfo = calculatePriceWithPromotion(item);
             const hasPromotion = priceInfo.promotion !== null;
-            const imageSrc =
-              item.imageUrl && item.imageUrl.trim() !== ''
-                ? item.imageUrl
-                : 'https://via.placeholder.com/400x240?text=Coffee';
+            // Handle image URL - if it starts with /images/, use it directly; if it's a filename, prepend /images/
+            let imageSrc = 'https://via.placeholder.com/400x240?text=Coffee';
+            if (item.imageUrl && item.imageUrl.trim() !== '') {
+              if (item.imageUrl.startsWith('http://') || item.imageUrl.startsWith('https://')) {
+                imageSrc = item.imageUrl;
+              } else if (item.imageUrl.startsWith('/')) {
+                imageSrc = item.imageUrl;
+              } else {
+                imageSrc = `/images/${item.imageUrl}`;
+              }
+            }
 
             return (
               <div
@@ -397,18 +404,69 @@ function ViewMenu() {
               </button>
             </div>
             
+            {/* Product Image */}
+            {(() => {
+              let imageSrc = 'https://via.placeholder.com/400x240?text=Coffee';
+              if (selectedItem.imageUrl && selectedItem.imageUrl.trim() !== '') {
+                if (selectedItem.imageUrl.startsWith('http://') || selectedItem.imageUrl.startsWith('https://')) {
+                  imageSrc = selectedItem.imageUrl;
+                } else if (selectedItem.imageUrl.startsWith('/')) {
+                  imageSrc = selectedItem.imageUrl;
+                } else {
+                  imageSrc = `/images/${selectedItem.imageUrl}`;
+                }
+              }
+              return (
+                <div style={{ marginBottom: '1.5rem' }}>
+                  <img
+                    src={imageSrc}
+                    alt={selectedItem.name}
+                    style={{
+                      width: '100%',
+                      maxHeight: '400px',
+                      objectFit: 'cover',
+                      borderRadius: '8px',
+                      border: '1px solid #ddd'
+                    }}
+                    onError={(e) => {
+                      e.target.src = 'https://via.placeholder.com/400x240?text=Coffee';
+                    }}
+                  />
+                </div>
+              );
+            })()}
+            
             <div style={{ marginBottom: '1rem' }}>
               {selectedItem.category && (
                 <div style={{ fontSize: '0.875rem', color: '#999', marginBottom: '0.5rem' }}>
                   📁 {selectedItem.category}
                 </div>
               )}
-              <div style={{ color: '#666', marginBottom: '1rem' }}>
+              <div style={{ color: '#666', marginBottom: '1rem', lineHeight: '1.6' }}>
                 {selectedItem.description || 'Không có mô tả'}
               </div>
-              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#6f4e37' }}>
+              <div style={{ fontSize: '1.5rem', fontWeight: 'bold', color: '#6f4e37', marginBottom: '0.5rem' }}>
                 {selectedItem.price?.toLocaleString('vi-VN')} ₫
               </div>
+              {/* Rating display in modal */}
+              {selectedItem.averageRating > 0 || selectedItem.totalReviews > 0 ? (
+                <div style={{ display: 'flex', alignItems: 'center', gap: '0.5rem', marginBottom: '1rem' }}>
+                  <span style={{ color: '#ffc107', fontSize: '1.25rem' }}>
+                    {'★'.repeat(Math.round(selectedItem.averageRating || 0))}
+                    {'☆'.repeat(5 - Math.round(selectedItem.averageRating || 0))}
+                  </span>
+                  <span style={{ color: '#666', fontWeight: '600' }}>
+                    {selectedItem.averageRating?.toFixed(1) || '0.0'}
+                  </span>
+                  <span style={{ color: '#999', fontSize: '0.9rem' }}>
+                    ({selectedItem.totalReviews || 0} đánh giá)
+                  </span>
+                </div>
+              ) : (
+                <div style={{ marginBottom: '1rem', color: '#999', fontSize: '0.9rem' }}>
+                  ⭐ Chưa có đánh giá
+                </div>
+              )}
             </div>
 
             <ReviewSection menuItemId={selectedItem._id || selectedItem.id} />
