@@ -1,7 +1,9 @@
 import React, { useState, useEffect } from 'react';
 import { menuService } from '../api/services';
+import { useLanguage } from '../contexts/LanguageContext';
 
 function MenuManagement() {
+  const { t } = useLanguage();
   const [menuItems, setMenuItems] = useState([]);
   const [showModal, setShowModal] = useState(false);
   const [editingItem, setEditingItem] = useState(null);
@@ -79,7 +81,7 @@ function MenuManagement() {
     } catch (error) {
       console.error('❌ Lỗi khi tự động cập nhật sản phẩm 123:', error);
       console.error('📋 Chi tiết lỗi:', error.response?.data || error.message);
-      alert('Lỗi khi cập nhật sản phẩm: ' + (error.response?.data?.message || error.message));
+        alert(t('menu.saveError') + ': ' + (error.response?.data?.message || error.message));
     }
   };
 
@@ -94,16 +96,16 @@ function MenuManagement() {
           return;
         }
         await menuService.update(itemId, formData);
-        alert('✅ Đã cập nhật món thành công!');
+        alert(`✅ ${t('menu.updateSuccess')}`);
       } else {
         await menuService.create(formData);
-        alert('✅ Đã thêm món mới thành công!');
+        alert(`✅ ${t('menu.saveSuccess')}`);
       }
       setShowModal(false);
       resetForm();
       loadMenuItems();
     } catch (error) {
-      alert('Lỗi khi lưu món: ' + (error.response?.data?.message || error.message));
+      alert(t('menu.saveError') + ': ' + (error.response?.data?.message || error.message));
     }
   };
 
@@ -119,14 +121,14 @@ function MenuManagement() {
       return;
     }
     
-    if (window.confirm('Bạn có chắc muốn xóa món này?')) {
+    if (window.confirm(t('menu.deleteConfirm'))) {
       try {
         await menuService.delete(id);
-        alert('✅ Đã xóa món thành công!');
+        alert(`✅ ${t('menu.deleteSuccess')}`);
         loadMenuItems();
       } catch (error) {
         console.error('Error deleting menu item:', error);
-        alert('Lỗi khi xóa món: ' + (error.response?.data?.message || error.message));
+        alert(t('menu.deleteError') + ': ' + (error.response?.data?.message || error.message));
       }
     }
   };
@@ -147,7 +149,7 @@ function MenuManagement() {
     <div className="container">
       <div className="card">
         <div style={{ display: 'flex', justifyContent: 'space-between', alignItems: 'center' }}>
-          <h2>Quản Lý Menu</h2>
+          <h2>{t('menu.menuManagement')}</h2>
           <button
             className="btn btn-primary"
             onClick={() => {
@@ -155,7 +157,7 @@ function MenuManagement() {
               setShowModal(true);
             }}
           >
-            + Thêm Món Mới
+            + {t('menu.addNewItem')}
           </button>
         </div>
 
@@ -163,13 +165,13 @@ function MenuManagement() {
           <table>
             <thead>
               <tr>
-                <th>Tên món</th>
-                <th>Mô tả</th>
-                <th>Giá</th>
-                <th>Danh mục</th>
-                <th>Đánh giá</th>
-                <th>Trạng thái</th>
-                <th>Thao tác</th>
+                <th>{t('menu.itemName')}</th>
+                <th>{t('common.description')}</th>
+                <th>{t('common.price')}</th>
+                <th>{t('common.category')}</th>
+                <th>{t('menu.reviews')}</th>
+                <th>{t('common.status')}</th>
+                <th>{t('common.actions')}</th>
               </tr>
             </thead>
             <tbody>
@@ -196,20 +198,20 @@ function MenuManagement() {
                           </span>
                         </div>
                       ) : (
-                        <span style={{ color: '#999', fontSize: '0.875rem' }}>Chưa có đánh giá</span>
+                        <span style={{ color: '#999', fontSize: '0.875rem' }}>{t('menu.noReviews')}</span>
                       )}
                     </td>
                     <td>
                       <span className={`badge ${item.available ? 'badge-available' : 'badge-cancelled'}`}>
-                        {item.available ? 'Còn hàng' : 'Hết hàng'}
+                        {item.available ? t('common.inStock') : t('common.outOfStock')}
                       </span>
                     </td>
                     <td>
                       <button className="btn btn-secondary" onClick={() => handleEdit(item)} style={{ marginRight: '0.5rem' }}>
-                        Sửa
+                        {t('common.edit')}
                       </button>
                       <button className="btn btn-danger" onClick={() => handleDelete(itemId)}>
-                        Xóa
+                        {t('common.delete')}
                       </button>
                     </td>
                   </tr>
@@ -223,10 +225,10 @@ function MenuManagement() {
       {showModal && (
         <div className="modal-overlay">
           <div className="modal">
-            <h2>{editingItem ? 'Sửa Món' : 'Thêm Món Mới'}</h2>
+            <h2>{editingItem ? t('menu.editItem') : t('menu.addNewItem')}</h2>
             <form onSubmit={handleSubmit}>
               <div className="form-group">
-                <label>Tên món *</label>
+                <label>{t('menu.itemName')} *</label>
                 <input
                   type="text"
                   value={formData.name}
@@ -235,7 +237,7 @@ function MenuManagement() {
                 />
               </div>
               <div className="form-group">
-                <label>Mô tả</label>
+                <label>{t('common.description')}</label>
                 <textarea
                   value={formData.description}
                   onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -243,7 +245,7 @@ function MenuManagement() {
                 />
               </div>
               <div className="form-group">
-                <label>Giá *</label>
+                <label>{t('common.price')} *</label>
                 <input
                   type="number"
                   value={formData.price}
@@ -252,7 +254,7 @@ function MenuManagement() {
                 />
               </div>
               <div className="form-group">
-                <label>Danh mục</label>
+                <label>{t('common.category')}</label>
                 <input
                   type="text"
                   value={formData.category}
@@ -261,7 +263,7 @@ function MenuManagement() {
                 />
               </div>
               <div className="form-group">
-                <label>URL hình ảnh</label>
+                <label>{t('menu.imageUrl')}</label>
                 <input
                   type="text"
                   value={formData.imageUrl}
@@ -298,7 +300,7 @@ function MenuManagement() {
                   </div>
                 )}
                 <div style={{ marginTop: '0.5rem', fontSize: '0.875rem', color: '#666' }}>
-                  <strong>Ảnh có sẵn:</strong>
+                  <strong>{t('menu.availableImages')}:</strong>
                   <div style={{ display: 'flex', flexWrap: 'wrap', gap: '0.5rem', marginTop: '0.5rem' }}>
                     {['anhsuachua.jpg', 'anhbacxiu.jpg', 'anhbanhflan.jpg', 'anhbanhsungbocroissants.jpg', 'anhbanhtiramisu.jpg', 'anhcafedaxay.jpg', 'anhsinhtobo.jpg', 'anhsinhtodau.jpg', 'anhsinhtoxoai.jpg', 'anhtradao.jpg', 'anhtrachanh.jpg', 'anhtrasuatranchau.jpg', 'anhtraxanhkhongdo.jpg'].map((img) => (
                       <button
@@ -328,15 +330,15 @@ function MenuManagement() {
                     checked={formData.available}
                     onChange={(e) => setFormData({ ...formData, available: e.target.checked })}
                   />
-                  {' '}Còn hàng
+                  {' '}{t('common.inStock')}
                 </label>
               </div>
               <div className="modal-actions">
                 <button type="button" className="btn btn-secondary" onClick={() => setShowModal(false)}>
-                  Hủy
+                  {t('common.cancel')}
                 </button>
                 <button type="submit" className="btn btn-primary">
-                  Lưu
+                  {t('common.save')}
                 </button>
               </div>
             </form>

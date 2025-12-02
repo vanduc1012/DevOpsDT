@@ -1,5 +1,6 @@
 import React from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
+import { LanguageProvider } from './contexts/LanguageContext';
 import Header from './components/Header';
 import PrivateRoute from './components/PrivateRoute';
 import Login from './components/Login';
@@ -27,9 +28,10 @@ function App() {
   const isAuthenticated = authService.getCurrentUser() !== null;
 
   return (
-    <Router>
-      <div className="App">
-        <Header />
+    <LanguageProvider>
+      <Router>
+        <div className="App">
+          <Header />
         <Routes>
           <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <Login />} />
           <Route path="/register" element={isAuthenticated ? <Navigate to="/" /> : <Register />} />
@@ -56,6 +58,7 @@ function App() {
         </Routes>
       </div>
     </Router>
+    </LanguageProvider>
   );
 }
 

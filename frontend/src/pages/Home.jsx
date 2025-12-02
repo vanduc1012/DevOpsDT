@@ -1,30 +1,32 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
 import { authService } from '../api/services';
+import { useLanguage } from '../contexts/LanguageContext';
 import Footer from '../components/Footer';
 import HeroSlider from '../components/HeroSlider';
 
 function Home() {
   const isAdmin = authService.isAdmin();
+  const { t } = useLanguage();
 
   const userShortcuts = [
-    { to: '/menu', icon: '📋', title: 'Xem Menu', desc: 'Khám phá món mới nhất' },
-    { to: '/book-table', icon: '🍽️', title: 'Đặt Bàn', desc: 'Chọn bàn yêu thích' },
-    { to: '/order-online', icon: '🛒', title: 'Đặt Món Online', desc: 'Giao/nhận tại quầy' },
-    { to: '/my-orders', icon: '📦', title: 'Đơn Hàng', desc: 'Theo dõi đơn đã đặt' },
+    { to: '/menu', icon: '📋', titleKey: 'home.viewMenu', descKey: 'home.viewMenuDesc' },
+    { to: '/book-table', icon: '🍽️', titleKey: 'home.bookTable', descKey: 'home.bookTableDesc' },
+    { to: '/order-online', icon: '🛒', titleKey: 'home.orderOnline', descKey: 'home.orderOnlineDesc' },
+    { to: '/my-orders', icon: '📦', titleKey: 'home.myOrders', descKey: 'home.myOrdersDesc' },
   ];
 
   const adminShortcuts = [
-    { to: '/admin/menu', icon: '📋', title: 'Quản Lý Menu', desc: 'Cập nhật món & hình ảnh' },
-    { to: '/admin/tables', icon: '🪑', title: 'Quản Lý Bàn', desc: 'Theo dõi tình trạng bàn' },
-    { to: '/admin/orders', icon: '📦', title: 'Quản Lý Order', desc: 'Kiểm soát tiến độ phục vụ' },
-    { to: '/admin/prices', icon: '💰', title: 'Quản Lý Giá', desc: 'Điều chỉnh giá bán linh hoạt' },
-    { to: '/admin/promotions', icon: '🎁', title: 'Khuyến Mãi', desc: 'Tạo combo & mã giảm giá' },
-    { to: '/admin/inventory', icon: '📦', title: 'Quản Lý Kho', desc: 'Cảnh báo tồn kho thấp' },
-    { to: '/admin/payment', icon: '💳', title: 'Thanh Toán', desc: 'Cấu hình QR & cổng thanh toán' },
-    { to: '/admin/users', icon: '👥', title: 'Quản Lý User', desc: 'Phân quyền user/admin' },
-    { to: '/admin/reports', icon: '📊', title: 'Báo Cáo', desc: 'Phân tích doanh thu' },
-    { to: '/admin/reviews', icon: '⭐', title: 'Quản Lý Đánh Giá', desc: 'Duyệt và quản lý đánh giá' },
+    { to: '/admin/menu', icon: '📋', titleKey: 'home.menuManagement', descKey: 'home.menuManagementDesc' },
+    { to: '/admin/tables', icon: '🪑', titleKey: 'home.tableManagement', descKey: 'home.tableManagementDesc' },
+    { to: '/admin/orders', icon: '📦', titleKey: 'home.orderManagement', descKey: 'home.orderManagementDesc' },
+    { to: '/admin/prices', icon: '💰', titleKey: 'home.priceManagement', descKey: 'home.priceManagementDesc' },
+    { to: '/admin/promotions', icon: '🎁', titleKey: 'home.promotionManagement', descKey: 'home.promotionManagementDesc' },
+    { to: '/admin/inventory', icon: '📦', titleKey: 'home.inventoryManagement', descKey: 'home.inventoryManagementDesc' },
+    { to: '/admin/payment', icon: '💳', titleKey: 'home.paymentManagement', descKey: 'home.paymentManagementDesc' },
+    { to: '/admin/users', icon: '👥', titleKey: 'home.userManagement', descKey: 'home.userManagementDesc' },
+    { to: '/admin/reports', icon: '📊', titleKey: 'home.reports', descKey: 'home.reportsDesc' },
+    { to: '/admin/reviews', icon: '⭐', titleKey: 'home.reviewManagement', descKey: 'home.reviewManagementDesc' },
   ];
 
   const shortcuts = isAdmin ? adminShortcuts : userShortcuts;
@@ -35,32 +37,30 @@ function Home() {
         {/* Hero giới thiệu chính ở phía trên */}
         <section className="home-hero card">
           <div>
-            <span className="home-hero__badge">{isAdmin ? 'Admin Dashboard' : 'Khách hàng thân thiết'}</span>
-            <h1>☕ Quản Lý Quán Cafe</h1>
+            <span className="home-hero__badge">{isAdmin ? t('home.adminBadge') : t('home.customerBadge')}</span>
+            <h1>{t('home.title')}</h1>
             <p>
-              {isAdmin
-                ? 'Theo dõi hoạt động, tối ưu quy trình phục vụ và đưa ra quyết định nhanh chóng.'
-                : 'Đặt bàn, chọn món và thanh toán online chỉ với vài thao tác đơn giản.'}
+              {isAdmin ? t('home.adminDescription') : t('home.customerDescription')}
             </p>
             <div className="home-hero__actions">
-              <Link to={isAdmin ? '/admin/orders' : '/order-online'}>Bắt đầu ngay</Link>
+              <Link to={isAdmin ? '/admin/orders' : '/order-online'}>{t('home.getStarted')}</Link>
               <Link to={isAdmin ? '/admin/reports' : '/menu'} className="secondary">
-                {isAdmin ? 'Xem báo cáo' : 'Khám phá menu'}
+                {isAdmin ? t('home.viewReports') : t('home.exploreMenu')}
               </Link>
             </div>
           </div>
           <div className="home-hero__stats">
             <div>
               <strong>{isAdmin ? '24+' : '200+'}</strong>
-              <span>{isAdmin ? 'Báo cáo/Tháng' : 'Món được yêu thích'}</span>
+              <span>{isAdmin ? t('home.adminStats.reportsPerMonth') : t('home.customerStats.favoriteItems')}</span>
             </div>
             <div>
               <strong>{isAdmin ? '8' : '4'}</strong>
-              <span>{isAdmin ? 'Module chính' : 'Bước đặt món'}</span>
+              <span>{isAdmin ? t('home.adminStats.mainModules') : t('home.customerStats.orderSteps')}</span>
             </div>
             <div>
               <strong>{isAdmin ? '100%' : '5⭐'}</strong>
-              <span>{isAdmin ? 'Kiểm soát real-time' : 'Trải nghiệm tiện lợi'}</span>
+              <span>{isAdmin ? t('home.adminStats.realtimeControl') : t('home.customerStats.convenientExperience')}</span>
             </div>
           </div>
         </section>
@@ -69,10 +69,10 @@ function Home() {
         <section className="home-shortcuts">
           <div className="home-section-header">
             <div>
-              <p>{isAdmin ? 'Danh mục quản trị' : 'Trải nghiệm khách hàng'}</p>
-              <h2>{isAdmin ? 'Tất cả công cụ trong một nơi' : 'Chọn chức năng bạn cần'}</h2>
+              <p>{isAdmin ? t('home.adminCategory') : t('home.customerCategory')}</p>
+              <h2>{isAdmin ? t('home.allToolsInOne') : t('home.chooseFunction')}</h2>
             </div>
-            <span>{shortcuts.length} tính năng</span>
+            <span>{shortcuts.length} {t('home.features')}</span>
           </div>
 
           <div className="grid home-grid">
@@ -80,8 +80,8 @@ function Home() {
               <Link key={item.to} to={item.to} className="card home-card">
                 <div className="home-card__icon">{item.icon}</div>
                 <div>
-                  <h3>{item.title}</h3>
-                  <p>{item.desc}</p>
+                  <h3>{t(item.titleKey)}</h3>
+                  <p>{t(item.descKey)}</p>
                 </div>
               </Link>
             ))}
