@@ -2,6 +2,7 @@ const blogPosts = [
   {
     slug: 'arabica-robusta',
     icon: '☕',
+    coverImage: '/blogimages/anh1.jpg',
     titleKey: 'home.blogArticles.arabicaRobusta.title',
     descKey: 'home.blogArticles.arabicaRobusta.desc',
     content: {
@@ -20,6 +21,7 @@ const blogPosts = [
   {
     slug: 'coffee-journey',
     icon: '🌱',
+    coverImage: '/blogimages/anh2.jpg',
     titleKey: 'home.blogArticles.journey.title',
     descKey: 'home.blogArticles.journey.desc',
     content: {
@@ -38,6 +40,7 @@ const blogPosts = [
   {
     slug: 'latte-art',
     icon: '🎨',
+    coverImage: '/blogimages/anh3.jpg',
     titleKey: 'home.blogArticles.latteArt.title',
     descKey: 'home.blogArticles.latteArt.desc',
     content: {

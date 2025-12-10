@@ -62,9 +62,12 @@ function BlogDetail() {
 
   const content = post.content[language] || post.content['vi-VN'];
 
-  // Cover image: prioritize prop on post, then optional default based on slug, else placeholder
+  // Cover image: prefer post.coverImage, then slug-based in /blogimages, else placeholder
   const coverImage =
-    post.coverImage || `/images/blog-${post.slug}.jpg` || '/images/coffee-cover-placeholder.jpg';
+    post.coverImage ||
+    `/blogimages/${post.slug}.jpg` ||
+    `/images/blog-${post.slug}.jpg` ||
+    '/images/coffee-cover-placeholder.jpg';
 
   const meta = {
     date: post.date || 'Đăng ngày 12/12/2025',

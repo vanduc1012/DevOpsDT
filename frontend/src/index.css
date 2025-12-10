@@ -938,9 +938,16 @@ code {
 .blog-detail-cover {
   width: 100%;
   height: auto;
+  max-height: 360px;
   border-radius: 12px;
   margin-bottom: 20px;
   object-fit: cover;
+}
+
+@media (max-width: 640px) {
+  .blog-detail-cover {
+    max-height: 260px;
+  }
 }
 
 .blog-detail-title {
