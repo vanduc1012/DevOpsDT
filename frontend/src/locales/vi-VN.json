@@ -113,7 +113,23 @@
     "reports": "Báo Cáo",
     "reportsDesc": "Phân tích doanh thu",
     "reviewManagement": "Quản Lý Đánh Giá",
-    "reviewManagementDesc": "Duyệt và quản lý đánh giá"
+    "reviewManagementDesc": "Duyệt và quản lý đánh giá",
+    "blogTitle": "Tin tức / Blog cà phê",
+    "blogSubtitle": "Khám phá những câu chuyện cà phê thú vị",
+    "blogArticles": {
+      "arabicaRobusta": {
+        "title": "Cách phân biệt Arabica & Robusta",
+        "desc": "Nhận biết hương thơm, vị chua, hậu vị của từng loại hạt."
+      },
+      "journey": {
+        "title": "Hành trình hạt cà phê từ nông trại đến tách cà phê",
+        "desc": "Từ khâu thu hoạch, rang xay đến pha chế chuẩn vị."
+      },
+      "latteArt": {
+        "title": "Bí mật latte art",
+        "desc": "Mẹo đánh sữa, kiểm soát nhiệt độ và rót để tạo hình đẹp."
+      }
+    }
   },
   "menu": {
     "title": "📋 Menu Quán Cafe",

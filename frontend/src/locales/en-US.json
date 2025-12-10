@@ -113,7 +113,23 @@
     "reports": "Reports",
     "reportsDesc": "Revenue analysis",
     "reviewManagement": "Review Management",
-    "reviewManagementDesc": "Approve and manage reviews"
+    "reviewManagementDesc": "Approve and manage reviews",
+    "blogTitle": "Coffee News / Blog",
+    "blogSubtitle": "Discover inspiring coffee stories",
+    "blogArticles": {
+      "arabicaRobusta": {
+        "title": "How to distinguish Arabica & Robusta",
+        "desc": "Spot the aroma, acidity and aftertaste of each bean type."
+      },
+      "journey": {
+        "title": "The journey of coffee beans from farm to cup",
+        "desc": "From harvesting, roasting to brewing the perfect cup."
+      },
+      "latteArt": {
+        "title": "Latte art secrets",
+        "desc": "Tips for steaming milk, controlling temperature and pouring beautiful art."
+      }
+    }
   },
   "menu": {
     "title": "📋 Cafe Menu",

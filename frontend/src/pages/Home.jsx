@@ -90,6 +90,32 @@ function Home() {
 
         {/* Hero image/slider now comes after text hero */}
         <HeroSlider />
+
+        {/* Blog / News section */}
+        <section className="home-blog card">
+          <div className="home-section-header">
+            <div>
+              <p>{t('home.blogSubtitle')}</p>
+              <h2>{t('home.blogTitle')}</h2>
+            </div>
+          </div>
+
+          <div className="home-blog-grid">
+            {[
+              { key: 'arabicaRobusta', icon: '☕' },
+              { key: 'journey', icon: '🌱' },
+              { key: 'latteArt', icon: '🎨' },
+            ].map((article) => (
+              <div key={article.key} className="card home-blog-card">
+                <div className="home-card__icon" style={{ fontSize: '1.75rem' }}>{article.icon}</div>
+                <div>
+                  <h3>{t(`home.blogArticles.${article.key}.title`)}</h3>
+                  <p>{t(`home.blogArticles.${article.key}.desc`)}</p>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </div>
       <Footer />
     </>
