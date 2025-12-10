@@ -4,6 +4,7 @@ import { authService } from '../api/services';
 import { useLanguage } from '../contexts/LanguageContext';
 import Footer from '../components/Footer';
 import HeroSlider from '../components/HeroSlider';
+import blogPosts from '../data/blogPosts';
 
 function Home() {
   const isAdmin = authService.isAdmin();
@@ -101,18 +102,14 @@ function Home() {
           </div>
 
           <div className="home-blog-grid">
-            {[
-              { key: 'arabicaRobusta', icon: '☕' },
-              { key: 'journey', icon: '🌱' },
-              { key: 'latteArt', icon: '🎨' },
-            ].map((article) => (
-              <div key={article.key} className="card home-blog-card">
+            {blogPosts.map((article) => (
+              <Link key={article.slug} to={`/blog/${article.slug}`} className="card home-blog-card">
                 <div className="home-card__icon" style={{ fontSize: '1.75rem' }}>{article.icon}</div>
                 <div>
-                  <h3>{t(`home.blogArticles.${article.key}.title`)}</h3>
-                  <p>{t(`home.blogArticles.${article.key}.desc`)}</p>
+                  <h3>{t(article.titleKey)}</h3>
+                  <p>{t(article.descKey)}</p>
                 </div>
-              </div>
+              </Link>
             ))}
           </div>
         </section>

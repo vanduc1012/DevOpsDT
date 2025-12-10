@@ -22,6 +22,7 @@ import MyOrders from './pages/MyOrders';
 import ViewMenu from './pages/ViewMenu';
 import OrderOnline from './pages/OrderOnline';
 import Payment from './pages/Payment';
+import BlogDetail from './pages/BlogDetail';
 import { authService } from './api/services';
 
 function App() {
@@ -42,6 +43,7 @@ function App() {
           <Route path="/payment/:orderId" element={<PrivateRoute><Payment /></PrivateRoute>} />
           <Route path="/my-orders" element={<PrivateRoute><MyOrders /></PrivateRoute>} />
           <Route path="/profile" element={<PrivateRoute><Profile /></PrivateRoute>} />
+          <Route path="/blog/:slug" element={<PrivateRoute><BlogDetail /></PrivateRoute>} />
           
           <Route path="/admin/menu" element={<PrivateRoute adminOnly={true}><MenuManagement /></PrivateRoute>} />
           <Route path="/admin/tables" element={<PrivateRoute adminOnly={true}><TableManagement /></PrivateRoute>} />
