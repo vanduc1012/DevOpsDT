@@ -23,6 +23,7 @@ import ViewMenu from './pages/ViewMenu';
 import OrderOnline from './pages/OrderOnline';
 import Payment from './pages/Payment';
 import BlogDetail from './pages/BlogDetail';
+import BlogAdmin from './pages/BlogAdmin';
 import { authService } from './api/services';
 
 function App() {
@@ -30,9 +31,9 @@ function App() {
 
   return (
     <LanguageProvider>
-      <Router>
-        <div className="App">
-          <Header />
+    <Router>
+      <div className="App">
+        <Header />
         <Routes>
           <Route path="/login" element={isAuthenticated ? <Navigate to="/" /> : <Login />} />
           <Route path="/register" element={isAuthenticated ? <Navigate to="/" /> : <Register />} />
@@ -55,6 +56,7 @@ function App() {
           <Route path="/admin/users" element={<PrivateRoute adminOnly={true}><UserManagement /></PrivateRoute>} />
           <Route path="/admin/reports" element={<PrivateRoute adminOnly={true}><Reports /></PrivateRoute>} />
           <Route path="/admin/reviews" element={<PrivateRoute adminOnly={true}><ReviewManagement /></PrivateRoute>} />
+          <Route path="/admin/blogs" element={<PrivateRoute adminOnly={true}><BlogAdmin /></PrivateRoute>} />
           
           <Route path="*" element={<Navigate to="/" />} />
         </Routes>

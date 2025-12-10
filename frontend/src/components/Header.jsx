@@ -33,6 +33,7 @@ function Header() {
         { to: '/admin/users', labelKey: 'navigation.userManagement' },
         { to: '/admin/reports', labelKey: 'navigation.reports' },
         { to: '/admin/reviews', labelKey: 'navigation.reviewManagement' },
+        { to: '/admin/blogs', labelKey: 'navigation.blogManagement' },
         { to: '/profile', labelKey: 'navigation.profile' },
       ]
     : [

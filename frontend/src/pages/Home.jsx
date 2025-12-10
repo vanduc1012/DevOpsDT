@@ -1,6 +1,6 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import { authService } from '../api/services';
+import { authService, blogService } from '../api/services';
 import { useLanguage } from '../contexts/LanguageContext';
 import Footer from '../components/Footer';
 import HeroSlider from '../components/HeroSlider';
@@ -9,6 +9,30 @@ import blogPosts from '../data/blogPosts';
 function Home() {
   const isAdmin = authService.isAdmin();
   const { t } = useLanguage();
+  const [articles, setArticles] = useState(blogPosts);
+
+  useEffect(() => {
+    let mounted = true;
+    const fetchBlogs = async () => {
+      try {
+        const res = await blogService.listPublic({ limit: 3 });
+        if (mounted && res.data && res.data.length) {
+          const mapped = res.data.map((item) => ({
+            slug: item.slug,
+            icon: '📰',
+            title: item.title,
+            desc: item.summary || (item.content && item.content[0]) || '',
+            coverImage: item.coverImage,
+          }));
+          setArticles(mapped);
+        }
+      } catch (error) {
+        console.warn('Use fallback blog articles', error?.message || error);
+      }
+    };
+    fetchBlogs();
+    return () => { mounted = false; };
+  }, []);
 
   const userShortcuts = [
     { to: '/menu', icon: '📋', titleKey: 'home.viewMenu', descKey: 'home.viewMenuDesc' },
@@ -28,66 +52,67 @@ function Home() {
     { to: '/admin/users', icon: '👥', titleKey: 'home.userManagement', descKey: 'home.userManagementDesc' },
     { to: '/admin/reports', icon: '📊', titleKey: 'home.reports', descKey: 'home.reportsDesc' },
     { to: '/admin/reviews', icon: '⭐', titleKey: 'home.reviewManagement', descKey: 'home.reviewManagementDesc' },
+    { to: '/admin/blogs', icon: '📝', titleKey: 'home.blogManagement', descKey: 'home.blogManagementDesc' },
   ];
 
   const shortcuts = isAdmin ? adminShortcuts : userShortcuts;
 
   return (
     <>
-      <div className="container home-layout">
+    <div className="container home-layout">
         {/* Hero giới thiệu chính ở phía trên */}
-        <section className="home-hero card">
-          <div>
+      <section className="home-hero card">
+        <div>
             <span className="home-hero__badge">{isAdmin ? t('home.adminBadge') : t('home.customerBadge')}</span>
             <h1>{t('home.title')}</h1>
-            <p>
+          <p>
               {isAdmin ? t('home.adminDescription') : t('home.customerDescription')}
-            </p>
-            <div className="home-hero__actions">
+          </p>
+          <div className="home-hero__actions">
               <Link to={isAdmin ? '/admin/orders' : '/order-online'}>{t('home.getStarted')}</Link>
-              <Link to={isAdmin ? '/admin/reports' : '/menu'} className="secondary">
+            <Link to={isAdmin ? '/admin/reports' : '/menu'} className="secondary">
                 {isAdmin ? t('home.viewReports') : t('home.exploreMenu')}
-              </Link>
-            </div>
+            </Link>
           </div>
-          <div className="home-hero__stats">
-            <div>
-              <strong>{isAdmin ? '24+' : '200+'}</strong>
+        </div>
+        <div className="home-hero__stats">
+          <div>
+            <strong>{isAdmin ? '24+' : '200+'}</strong>
               <span>{isAdmin ? t('home.adminStats.reportsPerMonth') : t('home.customerStats.favoriteItems')}</span>
-            </div>
-            <div>
-              <strong>{isAdmin ? '8' : '4'}</strong>
-              <span>{isAdmin ? t('home.adminStats.mainModules') : t('home.customerStats.orderSteps')}</span>
-            </div>
-            <div>
-              <strong>{isAdmin ? '100%' : '5⭐'}</strong>
-              <span>{isAdmin ? t('home.adminStats.realtimeControl') : t('home.customerStats.convenientExperience')}</span>
-            </div>
           </div>
-        </section>
+          <div>
+            <strong>{isAdmin ? '8' : '4'}</strong>
+              <span>{isAdmin ? t('home.adminStats.mainModules') : t('home.customerStats.orderSteps')}</span>
+          </div>
+          <div>
+            <strong>{isAdmin ? '100%' : '5⭐'}</strong>
+              <span>{isAdmin ? t('home.adminStats.realtimeControl') : t('home.customerStats.convenientExperience')}</span>
+          </div>
+        </div>
+      </section>
 
         {/* Khối chức năng (Xem Menu, Đặt Bàn, ...) nằm dưới hero */}
-        <section className="home-shortcuts">
-          <div className="home-section-header">
-            <div>
+      <section className="home-shortcuts">
+        <div className="home-section-header">
+          <div>
               <p>{isAdmin ? t('home.adminCategory') : t('home.customerCategory')}</p>
               <h2>{isAdmin ? t('home.allToolsInOne') : t('home.chooseFunction')}</h2>
-            </div>
-            <span>{shortcuts.length} {t('home.features')}</span>
           </div>
+            <span>{shortcuts.length} {t('home.features')}</span>
+        </div>
 
-          <div className="grid home-grid">
-            {shortcuts.map((item) => (
-              <Link key={item.to} to={item.to} className="card home-card">
-                <div className="home-card__icon">{item.icon}</div>
-                <div>
+        <div className="grid home-grid">
+          {shortcuts.map((item) => (
+            <Link key={item.to} to={item.to} className="card home-card">
+              <div className="home-card__icon">{item.icon}</div>
+              <div>
                   <h3>{t(item.titleKey)}</h3>
                   <p>{t(item.descKey)}</p>
-                </div>
-              </Link>
-            ))}
-          </div>
-        </section>
+              </div>
+            </Link>
+          ))}
+        </div>
+      </section>
 
         {/* Hero image/slider now comes after text hero */}
         <HeroSlider />
@@ -102,18 +127,22 @@ function Home() {
           </div>
 
           <div className="home-blog-grid">
-            {blogPosts.map((article) => (
-              <Link key={article.slug} to={`/blog/${article.slug}`} className="card home-blog-card">
-                <div className="home-card__icon" style={{ fontSize: '1.75rem' }}>{article.icon}</div>
-                <div>
-                  <h3>{t(article.titleKey)}</h3>
-                  <p>{t(article.descKey)}</p>
-                </div>
-              </Link>
-            ))}
+            {articles.map((article) => {
+              const title = article.titleKey ? t(article.titleKey) : article.title;
+              const desc = article.descKey ? t(article.descKey) : article.desc;
+              return (
+                <Link key={article.slug} to={`/blog/${article.slug}`} className="card home-blog-card">
+                  <div className="home-card__icon" style={{ fontSize: '1.75rem' }}>{article.icon || '📰'}</div>
+                  <div>
+                    <h3>{title}</h3>
+                    <p>{desc}</p>
+                  </div>
+                </Link>
+              );
+            })}
           </div>
         </section>
-      </div>
+    </div>
       <Footer />
     </>
   );

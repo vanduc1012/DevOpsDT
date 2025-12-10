@@ -1,7 +1,8 @@
-import React from 'react';
+import React, { useEffect, useMemo, useState } from 'react';
 import { useParams, Link } from 'react-router-dom';
 import { useLanguage } from '../contexts/LanguageContext';
 import blogPosts from '../data/blogPosts';
+import { blogService } from '../api/services';
 
 // Layout wrapper: centers content, adds outer padding and background
 const BlogDetailLayout = ({ children }) => (
@@ -45,10 +46,62 @@ const RelatedPostsSection = ({ currentSlug, posts, t }) => {
 function BlogDetail() {
   const { slug } = useParams();
   const { language, t } = useLanguage();
+  const [post, setPost] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const post = blogPosts.find((p) => p.slug === slug);
+  useEffect(() => {
+    let mounted = true;
+    const fetchPost = async () => {
+      try {
+        const res = await blogService.getBySlug(slug);
+        if (mounted) setPost(res.data);
+      } catch (error) {
+        // Fallback to static data if API not ready
+        const fallback = blogPosts.find((p) => p.slug === slug);
+        if (mounted) setPost(fallback || null);
+      } finally {
+        if (mounted) setLoading(false);
+      }
+    };
+    fetchPost();
+    return () => { mounted = false; };
+  }, [slug]);
 
-  if (!post) {
+  const content = useMemo(() => {
+    if (!post) return [];
+    if (Array.isArray(post.content)) {
+      return post.content;
+    }
+    if (typeof post.content === 'string') {
+      return [post.content];
+    }
+    if (post.content && typeof post.content === 'object') {
+      return post.content[language] || post.content['vi-VN'] || [];
+    }
+    return [];
+  }, [post, language]);
+
+  const coverImage = useMemo(() => {
+    if (!post) return '/images/coffee-cover-placeholder.jpg';
+    return (
+      post.coverImage ||
+      `/blogimages/${post.slug}.jpg` ||
+      `/images/blog-${post.slug}.jpg` ||
+      '/images/coffee-cover-placeholder.jpg'
+    );
+  }, [post]);
+
+  const meta = {
+    date: (post && post.date) || (post && post.publishedAt ? new Date(post.publishedAt).toLocaleDateString() : 'Đăng ngày 12/12/2025'),
+    author: (post && post.author) || 'Tác giả: NV Quán',
+    category: (post && post.category) || 'Chủ đề: Kiến thức cà phê'
+  };
+
+  const resolvedTitle = post
+    ? (post.titleKey ? t(post.titleKey) : post.title || '')
+    : '';
+
+  if (!post && !loading) {
     return (
       <BlogDetailLayout>
         <h2 className="blog-detail-title">{t('common.error')}</h2>
@@ -60,20 +113,13 @@ function BlogDetail() {
     );
   }
 
-  const content = post.content[language] || post.content['vi-VN'];
-
-  // Cover image: prefer post.coverImage, then slug-based in /blogimages, else placeholder
-  const coverImage =
-    post.coverImage ||
-    `/blogimages/${post.slug}.jpg` ||
-    `/images/blog-${post.slug}.jpg` ||
-    '/images/coffee-cover-placeholder.jpg';
-
-  const meta = {
-    date: post.date || 'Đăng ngày 12/12/2025',
-    author: post.author || 'Tác giả: NV Quán',
-    category: post.category || 'Chủ đề: Kiến thức cà phê'
-  };
+  if (loading) {
+    return (
+      <BlogDetailLayout>
+        <p className="blog-detail-desc">Đang tải bài viết...</p>
+      </BlogDetailLayout>
+    );
+  }
 
   return (
     <BlogDetailLayout>
@@ -81,9 +127,9 @@ function BlogDetail() {
         ← Quay lại Tin tức
       </Link>
 
-      <img src={coverImage} alt={t(post.titleKey)} className="blog-detail-cover" />
+      <img src={coverImage} alt={resolvedTitle} className="blog-detail-cover" />
 
-      <h1 className="blog-detail-title">{t(post.titleKey)}</h1>
+      <h1 className="blog-detail-title">{resolvedTitle}</h1>
       <BlogMeta date={meta.date} author={meta.author} category={meta.category} />
 
       <div className="blog-detail-divider" />

@@ -60,7 +60,8 @@
     "paymentManagement": "Payment",
     "userManagement": "User Management",
     "reports": "Reports",
-    "reviewManagement": "Review Management"
+    "reviewManagement": "Review Management",
+    "blogManagement": "Blog Management"
   },
   "home": {
     "title": "☕ Cafe Management System",
@@ -114,6 +115,8 @@
     "reportsDesc": "Revenue analysis",
     "reviewManagement": "Review Management",
     "reviewManagementDesc": "Approve and manage reviews",
+    "blogManagement": "Blog Management",
+    "blogManagementDesc": "Create, edit, delete blog posts",
     "blogTitle": "Coffee News / Blog",
     "blogSubtitle": "Discover inspiring coffee stories",
     "blogArticles": {

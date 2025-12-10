@@ -60,7 +60,8 @@
     "paymentManagement": "Thanh toán",
     "userManagement": "Quản lý User",
     "reports": "Báo cáo",
-    "reviewManagement": "Quản Lý Đánh Giá"
+    "reviewManagement": "Quản Lý Đánh Giá",
+    "blogManagement": "Quản Lý Blog"
   },
   "home": {
     "title": "☕ Quản Lý Quán Cafe",
@@ -114,6 +115,8 @@
     "reportsDesc": "Phân tích doanh thu",
     "reviewManagement": "Quản Lý Đánh Giá",
     "reviewManagementDesc": "Duyệt và quản lý đánh giá",
+    "blogManagement": "Quản Lý Blog",
+    "blogManagementDesc": "Đăng, sửa, xóa bài viết blog",
     "blogTitle": "Tin tức / Blog cà phê",
     "blogSubtitle": "Khám phá những câu chuyện cà phê thú vị",
     "blogArticles": {

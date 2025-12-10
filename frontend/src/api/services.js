@@ -155,3 +155,13 @@ export const userService = {
   updateRole: (id, role) => api.patch(`/api/users/${id}/role`, { role }),
   delete: (id) => api.delete(`/api/users/${id}`),
 };
+
+export const blogService = {
+  listPublic: (params = {}) => api.get('/api/blogs', { params }),
+  getBySlug: (slug) => api.get(`/api/blogs/${slug}`),
+  listAdmin: (params = {}) => api.get('/api/blogs', { params: { ...params, all: true } }),
+  create: (data) => api.post('/api/blogs', data),
+  update: (id, data) => api.put(`/api/blogs/${id}`, data),
+  delete: (id) => api.delete(`/api/blogs/${id}`),
+  updateStatus: (id, status) => api.patch(`/api/blogs/${id}/status`, { status }),
+};
