@@ -16,8 +16,9 @@ function Home() {
     const fetchBlogs = async () => {
       try {
         const res = await blogService.listPublic({ limit: 3 });
-        if (mounted && res.data && res.data.length) {
-          const mapped = res.data.map((item) => ({
+        const posts = res.data?.data || res.data || [];
+        if (mounted && posts.length) {
+          const mapped = posts.map((item) => ({
             slug: item.slug,
             icon: '📰',
             title: item.title,
@@ -140,8 +141,8 @@ function Home() {
                 </Link>
               );
             })}
-          </div>
-        </section>
+        </div>
+      </section>
     </div>
       <Footer />
     </>

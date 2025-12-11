@@ -24,7 +24,7 @@ function BlogAdmin() {
     setLoading(true);
     try {
       const res = await blogService.listAdmin({ all: true, limit: 100 });
-      setPosts(res.data || []);
+      setPosts(res.data?.data || res.data || []);
     } catch (error) {
       console.error('Load blog posts failed', error);
     } finally {

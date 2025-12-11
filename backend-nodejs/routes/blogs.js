@@ -63,7 +63,7 @@ router.get('/', optionalAuth, async (req, res) => {
       .limit(Number(limit) || 20)
       .lean();
 
-    res.json(posts);
+    res.json({ data: posts });
   } catch (error) {
     console.error('Error fetching blog posts:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -83,7 +83,7 @@ router.get('/:slug', optionalAuth, async (req, res) => {
         return res.status(404).json({ message: 'Bài viết không tồn tại' });
       }
     }
-    res.json(post);
+    res.json({ data: post });
   } catch (error) {
     console.error('Error fetching blog post:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -115,7 +115,7 @@ router.post('/', authMiddleware, adminMiddleware, async (req, res) => {
       publishedAt: status === 'published' ? new Date() : undefined,
     });
 
-    res.status(201).json(post);
+    res.status(201).json({ data: post });
   } catch (error) {
     console.error('Error creating blog post:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -152,7 +152,7 @@ router.put('/:id', authMiddleware, adminMiddleware, async (req, res) => {
     }
 
     await post.save();
-    res.json(post);
+    res.json({ data: post });
   } catch (error) {
     console.error('Error updating blog post:', error);
     res.status(500).json({ message: 'Internal server error' });
@@ -185,7 +185,7 @@ router.patch('/:id/status', authMiddleware, adminMiddleware, async (req, res) =>
       post.publishedAt = new Date();
     }
     await post.save();
-    res.json(post);
+    res.json({ data: post });
   } catch (error) {
     console.error('Error updating blog status:', error);
     res.status(500).json({ message: 'Internal server error' });

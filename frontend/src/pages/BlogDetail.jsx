@@ -54,7 +54,7 @@ function BlogDetail() {
     const fetchPost = async () => {
       try {
         const res = await blogService.getBySlug(slug);
-        if (mounted) setPost(res.data);
+        if (mounted) setPost(res.data?.data || res.data);
       } catch (error) {
         // Fallback to static data if API not ready
         const fallback = blogPosts.find((p) => p.slug === slug);
